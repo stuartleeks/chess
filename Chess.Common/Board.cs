@@ -5,11 +5,6 @@ using System.Text;
 
 namespace Chess.Common
 {
-    public class Game
-    {
-
-    }
-
     public class Board
     {
         public Board()
@@ -50,6 +45,45 @@ namespace Chess.Common
                 }
             };
         }
+        public static Board Parse(string board)
+        {
+            var rows = board.Split('\r', '\n').Where(r => !string.IsNullOrEmpty(r)).ToArray();
+            if (rows.Length != 8)
+            {
+                throw new ArgumentException($"Should be 8 rows! (got {rows.Length})");
+            }
+            var boardRows = new List<BoardSquare[]>();
+            for (int rowIndex = 0; rowIndex < 8; rowIndex++)
+            {
+                var row = rows[rowIndex];
+                var boardRow = new List<BoardSquare>();
+                if (row.Length != (8 * 3) - 1)
+                {
+                    throw new ArgumentException($"Rows must be 23 chars. Row {rowIndex} was {row.Length}");
+                }
+                for (int columnIndex = 0; columnIndex < 8; columnIndex++)
+                {
+                    string squareString = row.Substring(columnIndex * 3, 2);
+                    boardRow.Add(ParseSquare(squareString));
+                }
+                boardRows.Add(boardRow.ToArray());
+            }
+            return new Board { Squares = boardRows.ToArray() };
+        }
+        private static BoardSquare ParseSquare(string squareString)
+        {
+            int colorValue = Array.IndexOf(ColorMap, squareString[0]);
+            if (colorValue < 0)
+            {
+                throw new ArgumentException($"Invalid colour value in square {squareString}");
+            }
+            int pieceValue = Array.IndexOf(PieceMap, squareString[1]);
+            if (pieceValue < 0)
+            {
+                throw new ArgumentException($"Invalid piece value in square {squareString}");
+            }
+            return new BoardSquare((Color)colorValue, (Piece)pieceValue);
+        }
 
         public BoardSquare[][] Squares { get; set; }
 
@@ -72,7 +106,7 @@ namespace Chess.Common
                     var square = Squares[row][column];
                     buf.Append(DumpColor(square));
                     buf.Append(DumpPiece(square));
-                    if (column<7)
+                    if (column < 7)
                     {
                         buf.Append(" ");
                     }
@@ -112,9 +146,9 @@ namespace Chess.Common
     }
     public enum Piece
     {
-        Empty = 0,  
-        Pawn = 1,  
-        Rook = 2,  
+        Empty = 0,
+        Pawn = 1,
+        Rook = 2,
         Knight = 3,
         Bishop = 4,
         Queen = 5,

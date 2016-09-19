@@ -17,8 +17,6 @@ namespace Chess.Common.Tests
 
             string boardDump = board.Dump();
 
-            Console.WriteLine(board);
-
             //                                 xx xx xx xx xx xx xx xx
             const string expectedEmptyBoard = "                       \r\n" +
                                               "                       \r\n" +
@@ -40,19 +38,40 @@ namespace Chess.Common.Tests
 
             string boardDump = board.Dump();
 
-            Console.WriteLine(board);
-
             //                                 xx xx xx xx xx xx xx xx
-            const string expectedEmptyBoard = "Br Bk Bb Bq BK Bb Bk Br\r\n" +
-                                              "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" +
-                                              "                       \r\n" +
-                                              "                       \r\n" +
-                                              "                       \r\n" +
-                                              "                       \r\n" +
-                                              "Wp Wp Wp Wp Wp Wp Wp Wp\r\n" +
-                                              "Wr Wk Wb Wq WK Wb Wk Wr\r\n";
+            const string expectedStartingBoard = "Br Bk Bb Bq BK Bb Bk Br\r\n" +
+                                                 "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" +
+                                                 "                       \r\n" +
+                                                 "                       \r\n" +
+                                                 "                       \r\n" +
+                                                 "                       \r\n" +
+                                                 "Wp Wp Wp Wp Wp Wp Wp Wp\r\n" +
+                                                 "Wr Wk Wb Wq WK Wb Wk Wr\r\n";
 
-            Assert.Equal(expectedEmptyBoard, boardDump);
+            Assert.Equal(expectedStartingBoard, boardDump);
         }
+
+
+        [Fact]
+        public void ParsingBoard()
+        {
+            //                            xx xx xx xx xx xx xx xx
+            const string expectedBoard = "Br Bk Bb Bq BK Bb Bk Br\r\n" +
+                                         "Wp Wp Wp Wp Wp Wp Wp Wp\r\n" +
+                                         "                       \r\n" +
+                                         "                       \r\n" +
+                                         "                       \r\n" +
+                                         "                       \r\n" +
+                                         "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" +
+                                         "Wr Wk Wb Wq WK Wb Wk Wr\r\n";
+
+            var board = Board.Parse(expectedBoard);
+
+            string boardDump = board.Dump();
+
+            Assert.Equal(expectedBoard, boardDump);
+        }
+
+
     }
 }

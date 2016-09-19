@@ -7,6 +7,8 @@ namespace Chess.Common
 {
     public class Board
     {
+        public Piece[][] Squares { get; set; }
+
         public Board()
         {
         }
@@ -15,33 +17,35 @@ namespace Chess.Common
         {
             return new Board
             {
-                Squares = new BoardSquare[8][]
+                Squares = new Piece[8][]
                 {
-                    Enumerable.Range(1,8).Select(_=>BoardSquare.Empty).ToArray(),
-                    Enumerable.Range(1,8).Select(_=>BoardSquare.Empty).ToArray(),
-                    Enumerable.Range(1,8).Select(_=>BoardSquare.Empty).ToArray(),
-                    Enumerable.Range(1,8).Select(_=>BoardSquare.Empty).ToArray(),
-                    Enumerable.Range(1,8).Select(_=>BoardSquare.Empty).ToArray(),
-                    Enumerable.Range(1,8).Select(_=>BoardSquare.Empty).ToArray(),
-                    Enumerable.Range(1,8).Select(_=>BoardSquare.Empty).ToArray(),
-                    Enumerable.Range(1,8).Select(_=>BoardSquare.Empty).ToArray(),
+                    Enumerable.Range(1,8).Select(_=>Piece.Empty).ToArray(),
+                    Enumerable.Range(1,8).Select(_=>Piece.Empty).ToArray(),
+                    Enumerable.Range(1,8).Select(_=>Piece.Empty).ToArray(),
+                    Enumerable.Range(1,8).Select(_=>Piece.Empty).ToArray(),
+                    Enumerable.Range(1,8).Select(_=>Piece.Empty).ToArray(),
+                    Enumerable.Range(1,8).Select(_=>Piece.Empty).ToArray(),
+                    Enumerable.Range(1,8).Select(_=>Piece.Empty).ToArray(),
+                    Enumerable.Range(1,8).Select(_=>Piece.Empty).ToArray(),
                 }
             };
         }
+
+
         public static Board CreateStartingBoard()
         {
             return new Board
             {
-                Squares = new BoardSquare[8][]
+                Squares = new Piece[8][]
                 {
-                    (new [] { 2, 3, 4, 5, 6, 4, 3, 2 }).Select(i=>new BoardSquare(Color.Black, (Piece)i)).ToArray(),
-                    Enumerable.Range(1,8).Select(_=>new BoardSquare(Color.Black, Piece.Pawn)).ToArray(),
-                    Enumerable.Range(1,8).Select(_=>BoardSquare.Empty).ToArray(),
-                    Enumerable.Range(1,8).Select(_=>BoardSquare.Empty).ToArray(),
-                    Enumerable.Range(1,8).Select(_=>BoardSquare.Empty).ToArray(),
-                    Enumerable.Range(1,8).Select(_=>BoardSquare.Empty).ToArray(),
-                    Enumerable.Range(1,8).Select(_=>new BoardSquare(Color.White, Piece.Pawn)).ToArray(),
-                    (new [] { 2, 3, 4, 5, 6, 4, 3, 2 }).Select(i=>new BoardSquare(Color.White, (Piece)i)).ToArray()
+                    (new [] { 2, 3, 4, 5, 6, 4, 3, 2 }).Select(i=>new Piece(Color.Black, (PieceType)i)).ToArray(),
+                    Enumerable.Range(1,8).Select(_=>new Piece(Color.Black, PieceType.Pawn)).ToArray(),
+                    Enumerable.Range(1,8).Select(_=>Piece.Empty).ToArray(),
+                    Enumerable.Range(1,8).Select(_=>Piece.Empty).ToArray(),
+                    Enumerable.Range(1,8).Select(_=>Piece.Empty).ToArray(),
+                    Enumerable.Range(1,8).Select(_=>Piece.Empty).ToArray(),
+                    Enumerable.Range(1,8).Select(_=>new Piece(Color.White, PieceType.Pawn)).ToArray(),
+                    (new [] { 2, 3, 4, 5, 6, 4, 3, 2 }).Select(i=>new Piece(Color.White, (PieceType)i)).ToArray()
                 }
             };
         }
@@ -52,41 +56,46 @@ namespace Chess.Common
             {
                 throw new ArgumentException($"Should be 8 rows! (got {rows.Length})");
             }
-            var boardRows = new List<BoardSquare[]>();
+            var boardRows = new List<Piece[]>();
             for (int rowIndex = 0; rowIndex < 8; rowIndex++)
             {
                 var row = rows[rowIndex];
-                var boardRow = new List<BoardSquare>();
+                var boardRow = new List<Piece>();
                 if (row.Length != (8 * 3) - 1)
                 {
                     throw new ArgumentException($"Rows must be 23 chars. Row {rowIndex} was {row.Length}");
                 }
                 for (int columnIndex = 0; columnIndex < 8; columnIndex++)
                 {
-                    string squareString = row.Substring(columnIndex * 3, 2);
-                    boardRow.Add(ParseSquare(squareString));
+                    string pieceString = row.Substring(columnIndex * 3, 2);
+                    boardRow.Add(ParsePiece(pieceString));
                 }
                 boardRows.Add(boardRow.ToArray());
             }
             return new Board { Squares = boardRows.ToArray() };
         }
-        private static BoardSquare ParseSquare(string squareString)
+        private static Piece ParsePiece(string pieceString)
         {
-            int colorValue = Array.IndexOf(ColorMap, squareString[0]);
+            int colorValue = Array.IndexOf(ColorMap, pieceString[0]);
             if (colorValue < 0)
             {
-                throw new ArgumentException($"Invalid colour value in square {squareString}");
+                throw new ArgumentException($"Invalid colour value in square {pieceString}");
             }
-            int pieceValue = Array.IndexOf(PieceMap, squareString[1]);
-            if (pieceValue < 0)
+            int pieceTypeValue = Array.IndexOf(PieceMap, pieceString[1]);
+            if (pieceTypeValue < 0)
             {
-                throw new ArgumentException($"Invalid piece value in square {squareString}");
+                throw new ArgumentException($"Invalid pieceType value in square {pieceString}");
             }
-            return new BoardSquare((Color)colorValue, (Piece)pieceValue);
+            return new Piece((Color)colorValue, (PieceType)pieceTypeValue);
         }
 
-        public BoardSquare[][] Squares { get; set; }
 
+        public void MovePiece(SquareReference from, SquareReference to)
+        {
+            var piece = Squares[from.Row][from.Column];
+            Squares[from.Row][from.Column] = Piece.Empty;
+            Squares[to.Row][to.Column] = piece;
+        }
         public string Dump()
         {
             // output the board with pieces as p (pawn), r (rook), k (knight), b (bishop), q (queen), K (king)
@@ -117,26 +126,49 @@ namespace Chess.Common
         }
 
         private static readonly char[] ColorMap = new[] { ' ', 'W', 'B' };
-        private char DumpColor(BoardSquare square)
+        private char DumpColor(Piece square)
         {
             return ColorMap[(int)square.Color];
         }
         private static readonly char[] PieceMap = new[] { ' ', 'p', 'r', 'k', 'b', 'q', 'K' };
-        private char DumpPiece(BoardSquare square)
+        private char DumpPiece(Piece square)
         {
-            return PieceMap[(int)square.Piece];
+            return PieceMap[(int)square.PieceType];
         }
     }
-    public struct BoardSquare
+    public struct SquareReference
     {
-        public static BoardSquare Empty = new BoardSquare(Color.Empty, Piece.Empty);
-        public BoardSquare(Color color, Piece piece)
+        public int Row { get; set; }
+        public int Column { get; set; }
+
+        public static implicit operator SquareReference(int[] value)
+        {
+            if (value.Length != 2)
+            {
+                throw new ArgumentException("Array cast to SquareReference must have 2 elements");
+            }
+            if (value[0] < 0 || value[0] >= 8
+                || value[1] < 0 || value[1] >= 8)
+            {
+                throw new ArgumentException("Array values must be between 0 and 8");
+            }
+            return new SquareReference
+            {
+                Row = value[0],
+                Column = value[1]
+            };
+        }
+    }
+    public struct Piece
+    {
+        public static Piece Empty = new Piece(Color.Empty, PieceType.Empty);
+        public Piece(Color color, PieceType pieceType)
         {
             Color = color;
-            Piece = piece;
+            PieceType = pieceType;
         }
         public Color Color { get; private set; }
-        public Piece Piece { get; private set; }
+        public PieceType PieceType { get; private set; }
     }
     public enum Color
     {
@@ -144,7 +176,7 @@ namespace Chess.Common
         White = 1,
         Black = 2
     }
-    public enum Piece
+    public enum PieceType
     {
         Empty = 0,
         Pawn = 1,

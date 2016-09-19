@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Chess.Common.Tests
 {
-    public class BoardTests
+    public class BoardInitializationTests
     {
         [Fact]
         public void DumpEmptyBoard()
@@ -38,7 +38,7 @@ namespace Chess.Common.Tests
 
             string boardDump = board.Dump();
 
-            //                                 xx xx xx xx xx xx xx xx
+            //                                    xx xx xx xx xx xx xx xx
             const string expectedStartingBoard = "Br Bk Bb Bq BK Bb Bk Br\r\n" +
                                                  "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" +
                                                  "                       \r\n" +
@@ -71,7 +71,5 @@ namespace Chess.Common.Tests
 
             Assert.Equal(expectedBoard, boardDump);
         }
-
-
     }
 }

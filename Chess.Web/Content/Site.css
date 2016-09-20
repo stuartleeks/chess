@@ -40,13 +40,15 @@ textarea {
     box-sizing: content-box;
     float: left;
 }
-
-.board-square-0 {
+.board-square img{
+    height:50px;
+}
+.board-square-white {
     color: #b58863;
     background-color: #f0d9b5;
 }
 
-.board-square-1 {
+.board-square-black {
     color: #f0d9b5;
     background-color: #b58863;
 }

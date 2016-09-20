@@ -6,7 +6,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="board">
-            @foreach (var row in Model.Game.Board.Squares)
+            @foreach (var row in Model.Board.Squares)
             {
                 squaretype = 1 - squaretype;
 
@@ -14,7 +14,12 @@
                     @foreach (var square in row)
                     {
                         squaretype = 1 - squaretype;
-                        <span class="board-square board-square-@squaretype">@square.Color.ToString() @square.PieceType</span>
+                        <span class="board-square board-square-@square.SquareColour">
+                            @if (square.PieceImage != null)
+                            {
+                                <img src="~/Content/Images/@square.PieceImage" alt="@square.PieceName" />
+                            }
+                        </span>
                     }
                     <div class="board-row-clear"></div>
                 </div>

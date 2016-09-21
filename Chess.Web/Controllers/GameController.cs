@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Chess.WebCore.Models.Game;
+using Chess.Web.Models.Game;
 
-namespace Chess.WebCore.Controllers
+namespace Chess.Web.Controllers
 {
     [Route("")]
     public class GameController : Controller

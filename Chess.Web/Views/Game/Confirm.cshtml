@@ -1,4 +1,4 @@
-﻿@model Chess.WebCore.Models.Game.GameModel
+﻿@model Chess.Web.Models.Game.GameModel
 @{
     // TODO - make these mappings in the view model!
     int squaretype = 0;
@@ -17,14 +17,7 @@
                         <span class="board-square board-square-@square.SquareColour">
                             @if (square.PieceImage != null)
                             {
-                                if (square.CanSelect)
-                                {
-                                    <a href="@square.SelectUrl"><img src="~/images/board/@square.PieceImage" alt="@square.PieceName" /></a>
-                                }
-                                else
-                                {
-                                    <img src="~/images/board/@square.PieceImage" alt="@square.PieceName" class="@(square.Reference == Model.Board.SelectedSquare ? "selected-square":"")" />
-                                }
+                                <img src="~/images/board/@square.PieceImage" alt="@square.PieceName" class="@(square.Reference == Model.Board.SelectedSquare ? "selected-square":"")" />
                             }
                             else if (square.CanSelect)
                             {

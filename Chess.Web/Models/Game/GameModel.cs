@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common = Chess.Common;
 
-namespace Chess.WebCore.Models.Game
+namespace Chess.Web.Models.Game
 {
     public class GameModel
     {

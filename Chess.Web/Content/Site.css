@@ -20,8 +20,8 @@ textarea {
     -moz-box-sizing: content-box;
     -webkit-box-sizing: content-box;
     box-sizing: content-box;
-    height:400px;
-    width:400px;
+    height: 400px;
+    width: 400px;
     margin-top: 50px;
     padding: 0;
     border-width: thin;
@@ -40,9 +40,23 @@ textarea {
     box-sizing: content-box;
     float: left;
 }
-.board-square img{
-    height:50px;
+
+.selected-square {
+    border-color: red;
+    border-style: solid;
+    border-width: thin;
 }
+
+.board-square img {
+    height: 50px;
+}
+
+.board-square a {
+    height: 50px;
+    width: 50px;
+    display: inline-block;
+}
+
 .board-square-white {
     color: #b58863;
     background-color: #f0d9b5;

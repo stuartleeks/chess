@@ -8,19 +8,26 @@ namespace Chess.Web.Models.Game
 {
     public class GameModel
     {
-        public Common.Game Game { get; set; }
-
         public Board Board { get; set; }
     }
     public class Board
     {
+        public Common.SquareReference? SelectedSquare { get; set; }
         public BoardSquare[][] Squares { get; set; }
     }
     public class BoardSquare
     {
         public string PieceName { get; set; }
         public string PieceImage { get; set; }
-        public string SquareColour { get; internal set; }
+        public string SquareColour { get; set; }
+        /// <summary>
+        /// When choosing a piece to move, this indicates squares with a piece that can be selected
+        /// When moving a piece, this indicates squares that the piece can be moved to
+        /// </summary>
+        public bool CanSelect { get; set; }
+        public string ReferenceString { get; set; }
+        public Common.SquareReference Reference { get; set; }
+        public string SelectUrl { get; set; }
     }
 
 }

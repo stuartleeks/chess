@@ -1,0 +1,34 @@
+﻿@model Chess.WebCore.Models.Game.GameModel
+@{
+    // TODO - make these mappings in the view model!
+    int squaretype = 0;
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="board">
+            @foreach (var row in Model.Board.Squares)
+            {
+                squaretype = 1 - squaretype;
+
+                <div class="board-row">
+                    @foreach (var square in row)
+                    {
+                        squaretype = 1 - squaretype;
+                        <span class="board-square board-square-@square.SquareColour">
+                            @if (square.PieceImage != null)
+                            {
+                                <img src="~/images/board/@square.PieceImage" alt="@square.PieceName" class="@(square.Reference == Model.Board.SelectedSquare ? "selected-square":"")" />
+                            }
+                            else if (square.CanSelect)
+                            {
+                                @* Remove hard-coded route!! *@
+                                <a href="@square.SelectUrl"></a>
+                            }
+                        </span>
+                    }
+                    <div class="board-row-clear"></div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

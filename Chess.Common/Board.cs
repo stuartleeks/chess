@@ -127,14 +127,14 @@ namespace Chess.Common
         }
         public string Dump()
         {
-            // output the board with pieces as p (pawn), r (rook), k (knight), b (bishop), q (queen), K (king)
+            // output the board with pieces as p (pawn), r (rook), n (knight), b (bishop), q (queen), k (king)
             // and colours B (black), W ( white)
             // Starting board is then
-            //  Br Bk Bb Bq BK Bb Bk Br
+            //  Br Bn Bb Bq Bk Bb Bn Br
             //  Bp Bp Bp Bp Bp Bp Bp Bp 
             // [ 6 rows of spaces ]
             //  Wp Wp Wp Wp Wp Wp Wp Wp 
-            //  Wr Wk Wb Wq WK Wb Wk Wr
+            //  Wr Wn Wb Wq Wk Wb Wn Wr
 
             StringBuilder buf = new StringBuilder((8 * 3) * 8);
             for (int row = 0; row < 8; row++)
@@ -159,7 +159,7 @@ namespace Chess.Common
         {
             return ColorMap[(int)square.Color];
         }
-        private static readonly char[] PieceMap = new[] { ' ', 'p', 'r', 'k', 'b', 'q', 'K' };
+        private static readonly char[] PieceMap = new[] { ' ', 'p', 'r', 'n', 'b', 'q', 'k' };
         private char DumpPiece(Piece square)
         {
             return PieceMap[(int)square.PieceType];
@@ -189,7 +189,7 @@ namespace Chess.Common
                     && column > 0 && column <= 8
                     && row > 0 && row <= 8)
                 {
-                    return new SquareReference { Row = row - 1, Column = column };
+                    return new SquareReference { Row = 8 - row, Column = column };
                 }
             }
             throw new ArgumentException("string format for SquareReference must be 'e4' etc");
@@ -217,7 +217,7 @@ namespace Chess.Common
             {
                 throw new ArgumentException($"Column value '{Column}' is outside the allowed range");
             }
-            return ColumnReferences[Column] + (Row + 1).ToString();
+            return ColumnReferences[Column] + (8- Row).ToString();
         }
         public override bool Equals(Object obj)
         {

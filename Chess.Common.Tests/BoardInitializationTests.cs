@@ -39,14 +39,14 @@ namespace Chess.Common.Tests
             string boardDump = board.Dump();
 
             //                                    xx xx xx xx xx xx xx xx
-            const string expectedStartingBoard = "Br Bk Bb Bq BK Bb Bk Br\r\n" +
+            const string expectedStartingBoard = "Br Bn Bb Bq Bk Bb Bn Br\r\n" +
                                                  "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" +
                                                  "                       \r\n" +
                                                  "                       \r\n" +
                                                  "                       \r\n" +
                                                  "                       \r\n" +
                                                  "Wp Wp Wp Wp Wp Wp Wp Wp\r\n" +
-                                                 "Wr Wk Wb Wq WK Wb Wk Wr\r\n";
+                                                 "Wr Wn Wb Wq Wk Wb Wn Wr\r\n";
 
             Assert.Equal(expectedStartingBoard, boardDump);
         }
@@ -56,14 +56,14 @@ namespace Chess.Common.Tests
         public void ParsingBoard()
         {
             //                            xx xx xx xx xx xx xx xx
-            const string expectedBoard = "Br Bk Bb Bq BK Bb Bk Br\r\n" +
+            const string expectedBoard = "Br Bn Bb Bq Bk Bb Bn Br\r\n" +
                                          "Wp Wp Wp Wp Wp Wp Wp Wp\r\n" +
                                          "                       \r\n" +
                                          "                       \r\n" +
                                          "                       \r\n" +
                                          "                       \r\n" +
                                          "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" +
-                                         "Wr Wk Wb Wq WK Wb Wk Wr\r\n";
+                                         "Wr Wn Wb Wq Wk Wb Wn Wr\r\n";
 
             var board = Board.Parse(expectedBoard);
 

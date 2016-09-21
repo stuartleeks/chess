@@ -87,8 +87,9 @@ namespace Chess.Common.Tests
         public void CastingValidString_ReturnsReference()
         {
             var reference = (SquareReference)"b3";
-
-            Assert.Equal(2, reference.Row);
+            
+            // rows are inverted. internally we use 0 as top row, but a1 refers to bottom left
+            Assert.Equal(5, reference.Row);
             Assert.Equal(1, reference.Column);
         }
         [Fact]

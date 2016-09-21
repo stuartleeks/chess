@@ -47,7 +47,6 @@ namespace Chess.Web.Controllers
 
 
         static readonly string[] SquareColors = new[] { "white", "black" };
-        static readonly char[] ColumnReferences = new[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
         private GameModel MapToChoosePieceModel(Common.Game game)
         {
             return new GameModel

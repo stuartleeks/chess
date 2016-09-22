@@ -41,7 +41,7 @@ namespace Chess.Web.Controllers
             var pieceReference = (Common.SquareReference)pieceSquareRef;
             var endPositionReference = (Common.SquareReference)endPosition;
 
-            // Move the piece on our copy 
+            // Move the piece on our copy
             game.Board.MovePiece(pieceReference, endPositionReference);
             var model = MapToConfirmModel(game, pieceReference, endPositionReference);
             return View(model);
@@ -55,8 +55,7 @@ namespace Chess.Web.Controllers
             var endPositionReference = (Common.SquareReference)endPosition;
 
             // Move the piece and save
-            game.Board.MovePiece(pieceReference, endPositionReference);
-            game.CurrentTurn = (game.CurrentTurn == Common.Color.Black) ? Common.Color.White : Common.Color.Black;
+            game.MakeMove(pieceReference, endPositionReference);
             _gameStore.Save(game);
 
             return RedirectToRoute("StartMove");
@@ -67,6 +66,7 @@ namespace Chess.Web.Controllers
         {
             return new GameModel
             {
+                CurrentPlayer = game.CurrentTurn,
                 Board = new Board
                 {
                     Squares = game.Board.Squares
@@ -97,6 +97,7 @@ namespace Chess.Web.Controllers
             //Common.SquareReference[] availableMoves = game.GetAvailableMoves();
             return new GameModel
             {
+                CurrentPlayer = game.CurrentTurn,
                 Board = new Board
                 {
                     Squares = game.Board.Squares
@@ -135,6 +136,7 @@ namespace Chess.Web.Controllers
             //Common.SquareReference[] availableMoves = game.GetAvailableMoves();
             return new GameModel
             {
+                CurrentPlayer = game.CurrentTurn,
                 Board = new Board
                 {
                     Squares = game.Board.Squares

@@ -9,6 +9,7 @@ namespace Chess.Web.Models.Game
     public class GameModel
     {
         public Board Board { get; set; }
+        public Common.Color CurrentPlayer { get; set; }
     }
     public class Board
     {

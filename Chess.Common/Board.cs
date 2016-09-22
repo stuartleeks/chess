@@ -129,7 +129,10 @@ namespace Chess.Common
             return new Piece((Color)colorValue, (PieceType)pieceTypeValue);
         }
 
-
+        public Square this[SquareReference reference]
+        {
+            get { return Squares[reference.Row][reference.Column]; }
+        }
         public void MovePiece(SquareReference from, SquareReference to)
         {
             var piece = Squares[from.Row][from.Column].Piece;
@@ -142,9 +145,9 @@ namespace Chess.Common
             // and colours B (black), W ( white)
             // Starting board is then
             //  Br Bn Bb Bq Bk Bb Bn Br
-            //  Bp Bp Bp Bp Bp Bp Bp Bp 
+            //  Bp Bp Bp Bp Bp Bp Bp Bp
             // [ 6 rows of spaces ]
-            //  Wp Wp Wp Wp Wp Wp Wp Wp 
+            //  Wp Wp Wp Wp Wp Wp Wp Wp
             //  Wr Wn Wb Wq Wk Wb Wn Wr
 
             StringBuilder buf = new StringBuilder((8 * 3) * 8);

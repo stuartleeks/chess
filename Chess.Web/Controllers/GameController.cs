@@ -4,45 +4,63 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Chess.Web.Models.Game;
+using Chess.Web.Services;
 
 namespace Chess.Web.Controllers
 {
     [Route("")]
     public class GameController : Controller
     {
-        // temporary hack while working out the rendering!
-        static Common.Game TheGame = Common.Game.CreateStartingGame();
+        public GameController(GameStore gameStore)
+        {
+            _gameStore = gameStore;
+        }
 
-        [Route("", Name ="StartMove")]
+        [HttpGet("", Name ="StartMove")]
         public IActionResult ChoosePiece()
         {
-            var game = TheGame;
+            var game = _gameStore.GetGame();
 
             var model = MapToChoosePieceModel(game);
             return View("ShowGame", model);
         }
-        [Route("move/{pieceSquareRef}", Name = "ChooseEndPosition")]
+        [HttpGet("move/{pieceSquareRef}", Name = "ChooseEndPosition")]
         public IActionResult ChooseEndPosition(string pieceSquareRef) // eg b3
         {
-            var game = TheGame;
+            var game = _gameStore.GetGame();
             var pieceReference = (Common.SquareReference)pieceSquareRef;
 
             var model = MapToChooseEndPositionModel(game, pieceReference);
             return View("ShowGame", model);
         }
-        [Route("move/{pieceSquareRef}/{endPosition}", Name = "Confirm")]
+        [HttpGet("move/{pieceSquareRef}/{endPosition}", Name = "Confirm")]
         public IActionResult Confirm(string pieceSquareRef, string endPosition)
         {
-            var game = TheGame.Clone(); // clone to avoid modifying local state (in-memory game!)
+            // Called to prompt user to confirm
+            var game = _gameStore.GetGame();
             var pieceReference = (Common.SquareReference)pieceSquareRef;
             var endPositionReference = (Common.SquareReference)endPosition;
 
-            // Move the piece (will be without saving when we implement persistence)
+            // Move the piece on our copy 
             game.Board.MovePiece(pieceReference, endPositionReference);
             var model = MapToConfirmModel(game, pieceReference, endPositionReference);
             return View(model);
         }
+        [HttpPost("move/{pieceSquareRef}/{endPosition}", Name = "Confirm")]
+        public IActionResult Confirmed(string pieceSquareRef, string endPosition)
+        {
+            // Called when user has confirmed
+            var game = _gameStore.GetGame();
+            var pieceReference = (Common.SquareReference)pieceSquareRef;
+            var endPositionReference = (Common.SquareReference)endPosition;
 
+            // Move the piece and save
+            game.Board.MovePiece(pieceReference, endPositionReference);
+            game.CurrentTurn = (game.CurrentTurn == Common.Color.Black) ? Common.Color.White : Common.Color.Black;
+            _gameStore.Save(game);
+
+            return RedirectToRoute("StartMove");
+        }
 
         static readonly string[] SquareColors = new[] { "white", "black" };
         private GameModel MapToChoosePieceModel(Common.Game game)
@@ -157,6 +175,8 @@ namespace Chess.Web.Controllers
             {Common.PieceType.Queen, 'q' },
             {Common.PieceType.King, 'k' },
         };
+        private GameStore _gameStore;
+
         private string ImageNameFromPiece(Common.Piece piece)
         {
             if (piece.PieceType == Common.PieceType.Empty)

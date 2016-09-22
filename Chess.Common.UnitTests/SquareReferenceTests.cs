@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Chess.Common.Tests
+namespace Chess.Common.UnitTests
 {
     public class SquareReferenceTests
     {

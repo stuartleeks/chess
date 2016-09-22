@@ -197,8 +197,8 @@ namespace Chess.Common
                 int row;
 
                 if (int.TryParse(rowChar.ToString(), out row)
-                    && column > 0 && column <= 8
-                    && row > 0 && row <= 8)
+                    && column >= 0 && column < 8  // column already 0-7
+                    && row > 0 && row <= 8)       // row is 1-8 and reversed
                 {
                     return new SquareReference { Row = 8 - row, Column = column };
                 }

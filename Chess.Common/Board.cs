@@ -20,18 +20,29 @@ namespace Chess.Common
             {
                 Squares = new Square[8][]
                 {
-                    Enumerable.Range(0,8).Select(i => Square.Create(SquareReference.FromRowColumn(0, i), Piece.Empty)).ToArray(),
-                    Enumerable.Range(0,8).Select(i => Square.Create(SquareReference.FromRowColumn(1, i), Piece.Empty)).ToArray(),
-                    Enumerable.Range(0,8).Select(i => Square.Create(SquareReference.FromRowColumn(2, i), Piece.Empty)).ToArray(),
-                    Enumerable.Range(0,8).Select(i => Square.Create(SquareReference.FromRowColumn(3, i), Piece.Empty)).ToArray(),
-                    Enumerable.Range(0,8).Select(i => Square.Create(SquareReference.FromRowColumn(4, i), Piece.Empty)).ToArray(),
-                    Enumerable.Range(0,8).Select(i => Square.Create(SquareReference.FromRowColumn(5, i), Piece.Empty)).ToArray(),
-                    Enumerable.Range(0,8).Select(i => Square.Create(SquareReference.FromRowColumn(6, i), Piece.Empty)).ToArray(),
-                    Enumerable.Range(0,8).Select(i => Square.Create(SquareReference.FromRowColumn(7, i), Piece.Empty)).ToArray(),
+                    Enumerable.Range(0,8).Select(i => new Square(SquareReference.FromRowColumn(0, i), Piece.Empty)).ToArray(),
+                    Enumerable.Range(0,8).Select(i => new Square(SquareReference.FromRowColumn(1, i), Piece.Empty)).ToArray(),
+                    Enumerable.Range(0,8).Select(i => new Square(SquareReference.FromRowColumn(2, i), Piece.Empty)).ToArray(),
+                    Enumerable.Range(0,8).Select(i => new Square(SquareReference.FromRowColumn(3, i), Piece.Empty)).ToArray(),
+                    Enumerable.Range(0,8).Select(i => new Square(SquareReference.FromRowColumn(4, i), Piece.Empty)).ToArray(),
+                    Enumerable.Range(0,8).Select(i => new Square(SquareReference.FromRowColumn(5, i), Piece.Empty)).ToArray(),
+                    Enumerable.Range(0,8).Select(i => new Square(SquareReference.FromRowColumn(6, i), Piece.Empty)).ToArray(),
+                    Enumerable.Range(0,8).Select(i => new Square(SquareReference.FromRowColumn(7, i), Piece.Empty)).ToArray(),
                 }
             };
         }
 
+        public Board Clone()
+        {
+            return new Board
+            {
+                Squares = this.Squares.Select(
+                        row => row
+                                .Select(s => s.Clone())
+                                .ToArray()
+                    ).ToArray()
+            };
+        }
 
         public static Board CreateStartingBoard()
         {
@@ -41,32 +52,32 @@ namespace Chess.Common
                 {
                     (new [] { 2, 3, 4, 5, 6, 4, 3, 2 })
                         .Select(
-                            (i, index)=> Square.Create(
+                            (i, index)=> new Square(
                                     SquareReference.FromRowColumn(0, index),
                                     new Piece(Color.Black, (PieceType)i)
                                 )
                         ).ToArray(),
                     Enumerable.Range(0,8)
                         .Select(
-                            i=> Square.Create(
+                            i=> new Square(
                                     SquareReference.FromRowColumn(1,i),
                                     new Piece(Color.Black, PieceType.Pawn)
                                 )
                         ).ToArray(),
-                    Enumerable.Range(0,8).Select(i => Square.Create(SquareReference.FromRowColumn(2, i), Piece.Empty)).ToArray(),
-                    Enumerable.Range(0,8).Select(i => Square.Create(SquareReference.FromRowColumn(3, i), Piece.Empty)).ToArray(),
-                    Enumerable.Range(0,8).Select(i => Square.Create(SquareReference.FromRowColumn(4, i), Piece.Empty)).ToArray(),
-                    Enumerable.Range(0,8).Select(i => Square.Create(SquareReference.FromRowColumn(5, i), Piece.Empty)).ToArray(),
+                    Enumerable.Range(0,8).Select(i => new Square(SquareReference.FromRowColumn(2, i), Piece.Empty)).ToArray(),
+                    Enumerable.Range(0,8).Select(i => new Square(SquareReference.FromRowColumn(3, i), Piece.Empty)).ToArray(),
+                    Enumerable.Range(0,8).Select(i => new Square(SquareReference.FromRowColumn(4, i), Piece.Empty)).ToArray(),
+                    Enumerable.Range(0,8).Select(i => new Square(SquareReference.FromRowColumn(5, i), Piece.Empty)).ToArray(),
                     Enumerable.Range(0,8)
                         .Select(
-                            i => Square.Create(
+                            i => new Square(
                                     SquareReference.FromRowColumn(6,i),
                                     new Piece(Color.White, PieceType.Pawn)
                                 )
                         ).ToArray(),
                     (new [] { 2, 3, 4, 5, 6, 4, 3, 2 })
                         .Select(
-                            (i, index) => Square.Create(
+                            (i, index) => new Square(
                                     SquareReference.FromRowColumn(7, index),
                                     new Piece(Color.White, (PieceType)i)
                             )
@@ -93,7 +104,7 @@ namespace Chess.Common
                 for (int columnIndex = 0; columnIndex < 8; columnIndex++)
                 {
                     string pieceString = row.Substring(columnIndex * 3, 2);
-                    var square = Square.Create(
+                    var square = new Square(
                             SquareReference.FromRowColumn(rowIndex, columnIndex),
                             ParsePiece(pieceString)
                         );
@@ -238,15 +249,20 @@ namespace Chess.Common
     }
     public struct Square
     {
-        public SquareReference Reference { get; set; }
-        public Piece Piece { get; set; }
-        public static Square Create(SquareReference reference, Piece piece)
+        public SquareReference Reference { get; private set; }
+        public Piece Piece { get; set; } // TODO - should we make this immutable?
+        public Square(SquareReference reference, Piece piece)
         {
-            return new Square
-            {
-                Reference = reference,
-                Piece = piece
-            };
+            Reference = reference;
+            Piece = piece;
+        }
+
+        public Square Clone()
+        {
+            return new Square(
+                    Reference,
+                    Piece
+                    );
         }
     }
     public struct Piece

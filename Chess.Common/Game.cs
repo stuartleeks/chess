@@ -19,6 +19,15 @@ namespace Chess.Common
             };
 
         }
+
+        public Game Clone()
+        {
+            return new Game
+            {
+                CurrentTurn = this.CurrentTurn,
+                Board = this.Board.Clone()
+            };
+        }
     }
 
 }

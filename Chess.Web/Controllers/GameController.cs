@@ -11,12 +11,11 @@ namespace Chess.Web.Controllers
     public class GameController : Controller
     {
         // temporary hack while working out the rendering!
-        static Common.Game TheGame;
+        static Common.Game TheGame = Common.Game.CreateStartingGame();
 
-        [Route("")]
+        [Route("", Name ="StartMove")]
         public IActionResult ChoosePiece()
         {
-            TheGame = Common.Game.CreateStartingGame(); // Reset each time for now!
             var game = TheGame;
 
             var model = MapToChoosePieceModel(game);
@@ -34,7 +33,7 @@ namespace Chess.Web.Controllers
         [Route("move/{pieceSquareRef}/{endPosition}", Name = "Confirm")]
         public IActionResult Confirm(string pieceSquareRef, string endPosition)
         {
-            var game = TheGame;
+            var game = TheGame.Clone(); // clone to avoid modifying local state (in-memory game!)
             var pieceReference = (Common.SquareReference)pieceSquareRef;
             var endPositionReference = (Common.SquareReference)endPosition;
 

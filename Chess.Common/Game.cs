@@ -18,9 +18,16 @@ namespace Chess.Common
 
         private List<Move> _moves;
 
-        private Game(string id)
+        public Game(string id)
         {
             Id = id;
+        }
+        public Game(string id, Color currentTurn, Board board, List<Move> moves)
+        {
+            Id = id;
+            CurrentTurn = currentTurn;
+            Board = board;
+            _moves = moves;
         }
 
 

@@ -93,6 +93,24 @@ namespace Chess.Common.UnitTests
             Assert.Equal(1, reference.Column);
         }
         [Fact]
+        public void CastingValidStringBottomLeftCorner_ReturnsReference()
+        {
+            var reference = (SquareReference)"a1";
+
+            // rows are inverted. internally we use 0 as top row, but a1 refers to bottom left
+            Assert.Equal(7, reference.Row);
+            Assert.Equal(0, reference.Column);
+        }
+        [Fact]
+        public void CastingValidStringTopRightCorner_ReturnsReference()
+        {
+            var reference = (SquareReference)"h8";
+
+            // rows are inverted. internally we use 0 as top row, but a1 refers to bottom left
+            Assert.Equal(0, reference.Row);
+            Assert.Equal(7, reference.Column);
+        }
+        [Fact]
         public void CastingTooShortString_ThrowsArgumentException()
         {
             Assert.Throws<ArgumentException>(() =>

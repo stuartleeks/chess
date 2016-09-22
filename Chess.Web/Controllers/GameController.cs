@@ -16,28 +16,45 @@ namespace Chess.Web.Controllers
             _gameStore = gameStore;
         }
 
-        [HttpGet("", Name ="StartMove")]
-        public IActionResult ChoosePiece()
+        [HttpGet("", Name ="Home")]
+        public IActionResult Home()
         {
-            var game = _gameStore.GetGame();
+            return View();
+        }
+
+        [HttpPost("play/new")]
+        public IActionResult StartNew()
+        {
+            var game = Common.Game.CreateStartingGame();
+            _gameStore.Save(game);
+            return RedirectToAction(nameof(ChoosePiece), new { gameId = game.Id });
+        }
+
+        [HttpGet("play/{gameId}")]
+        public IActionResult ChoosePiece(string gameId)
+        {
+            var game = _gameStore.GetGame(gameId);
 
             var model = MapToChoosePieceModel(game);
             return View("ShowGame", model);
         }
-        [HttpGet("move/{pieceSquareRef}", Name = "ChooseEndPosition")]
-        public IActionResult ChooseEndPosition(string pieceSquareRef) // eg b3
+
+        // TODO - enable binding for SquareReference type
+        [HttpGet("play/{gameId}/{pieceSquareRef}")]
+        public IActionResult ChooseEndPosition(string gameId, string pieceSquareRef) // eg b3
         {
-            var game = _gameStore.GetGame();
+            var game = _gameStore.GetGame(gameId);
             var pieceReference = (Common.SquareReference)pieceSquareRef;
 
             var model = MapToChooseEndPositionModel(game, pieceReference);
             return View("ShowGame", model);
         }
-        [HttpGet("move/{pieceSquareRef}/{endPosition}", Name = "Confirm")]
-        public IActionResult Confirm(string pieceSquareRef, string endPosition)
+
+        [HttpGet("play/{gameId}/{pieceSquareRef}/{endPosition}")]
+        public IActionResult Confirm(string gameId, string pieceSquareRef, string endPosition)
         {
             // Called to prompt user to confirm
-            var game = _gameStore.GetGame();
+            var game = _gameStore.GetGame(gameId);
             var pieceReference = (Common.SquareReference)pieceSquareRef;
             var endPositionReference = (Common.SquareReference)endPosition;
 
@@ -46,11 +63,12 @@ namespace Chess.Web.Controllers
             var model = MapToConfirmModel(game, pieceReference, endPositionReference);
             return View(model);
         }
-        [HttpPost("move/{pieceSquareRef}/{endPosition}", Name = "Confirm")]
-        public IActionResult Confirmed(string pieceSquareRef, string endPosition)
+
+        [HttpPost("play/{gameId}/{pieceSquareRef}/{endPosition}")]
+        public IActionResult Confirmed(string gameId, string pieceSquareRef, string endPosition)
         {
             // Called when user has confirmed
-            var game = _gameStore.GetGame();
+            var game = _gameStore.GetGame(gameId);
             var pieceReference = (Common.SquareReference)pieceSquareRef;
             var endPositionReference = (Common.SquareReference)endPosition;
 
@@ -58,7 +76,7 @@ namespace Chess.Web.Controllers
             game.MakeMove(pieceReference, endPositionReference);
             _gameStore.Save(game);
 
-            return RedirectToRoute("StartMove");
+            return RedirectToAction(nameof(ChoosePiece));
         }
 
         static readonly string[] SquareColors = new[] { "white", "black" };
@@ -81,7 +99,7 @@ namespace Chess.Web.Controllers
                                             SquareColour = SquareColors[(rowIndex + columnIndex) % 2],
                                             CanSelect = canSelect,
                                             SelectUrl = canSelect
-                                                            ? Url.RouteUrl("ChooseEndPosition", new { pieceSquareRef = squareRef })
+                                                            ? Url.Action(nameof(ChooseEndPosition), new { pieceSquareRef = squareRef })
                                                             : null,
                                             ReferenceString = squareRef
                                         };
@@ -109,7 +127,7 @@ namespace Chess.Web.Controllers
                                         bool canSelect = square.Piece.Color != game.CurrentTurn;
                                         string squareRef = square.Reference.ToString();
                                         string selectUrl = canSelect
-                                                            ? Url.RouteUrl("Confirm", new { pieceSquareRef = selectedSquareReference.ToString(), endPosition = squareRef })
+                                                            ? Url.Action(nameof(Confirm), new { pieceSquareRef = selectedSquareReference.ToString(), endPosition = squareRef })
                                                             : null;
                                         return new BoardSquare
                                         {

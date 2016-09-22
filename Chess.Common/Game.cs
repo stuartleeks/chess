@@ -7,8 +7,9 @@ namespace Chess.Common
 {
     public class Game
     {
-        public Board Board { get; set; }
-        public Color CurrentTurn { get; set; }
+        public string Id { get; private set; }
+        public Board Board { get; private set; }
+        public Color CurrentTurn { get; private set; }
 
         public IEnumerable<Move> Moves
         {
@@ -17,10 +18,15 @@ namespace Chess.Common
 
         private List<Move> _moves;
 
+        private Game(string id)
+        {
+            Id = id;
+        }
+
 
         public static Game CreateStartingGame()
         {
-            return new Game
+            return new Game(GenerateId())
             {
                 CurrentTurn = Color.White,
                 Board = Common.Board.CreateStartingBoard(),
@@ -31,12 +37,17 @@ namespace Chess.Common
 
         public Game Clone()
         {
-            return new Game
+            return new Game(this.Id)
             {
                 CurrentTurn = this.CurrentTurn,
                 Board = this.Board.Clone(),
                 _moves = this._moves.Select(m=>m.Clone()).ToList()
             };
+        }
+        private static string GenerateId()
+        {
+            // TODO implement friendlier IDs!
+            return Guid.NewGuid().ToString();
         }
 
         public void MakeMove(SquareReference pieceReference, SquareReference endPositionReference)

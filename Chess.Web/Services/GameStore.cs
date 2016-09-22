@@ -8,18 +8,17 @@ namespace Chess.Web.Services
 {
     public class GameStore
     {
-        static Common.Game _game = Common.Game.CreateStartingGame();
+        private Dictionary<string, Common.Game> _games = new Dictionary<string, Common.Game>();
 
         // TODO - interface?? MongoDB, ...??
-        // TODO - handle more than one game!
 
-        public Common.Game GetGame()
+        public Common.Game GetGame(string gameId)
         {
-            return _game.Clone();
+            return _games[gameId]?.Clone();
         }
         public void Save(Common.Game game)
         {
-            _game = game;
+            _games[game.Id] = game;
         }
 
     }

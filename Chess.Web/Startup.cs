@@ -31,7 +31,7 @@ namespace Chess.Web
             services.AddMvc();
 
 
-            services.AddSingleton<Services.GameStore>(); // singleton while in-memory :-)
+            services.AddSingleton<Services.IGameStore, Services.InMemoryGameStore>(); // singleton for in-memory store :-)
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

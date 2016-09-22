@@ -6,11 +6,9 @@ using Common = Chess.Common;
 
 namespace Chess.Web.Services
 {
-    public class GameStore
+    public class InMemoryGameStore : IGameStore
     {
         private Dictionary<string, Common.Game> _games = new Dictionary<string, Common.Game>();
-
-        // TODO - interface?? MongoDB, ...??
 
         public Common.Game GetGame(string gameId)
         {

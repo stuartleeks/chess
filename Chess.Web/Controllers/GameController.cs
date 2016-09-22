@@ -11,7 +11,7 @@ namespace Chess.Web.Controllers
     [Route("")]
     public class GameController : Controller
     {
-        public GameController(GameStore gameStore)
+        public GameController(InMemoryGameStore gameStore)
         {
             _gameStore = gameStore;
         }
@@ -195,7 +195,7 @@ namespace Chess.Web.Controllers
             {Common.PieceType.Queen, 'q' },
             {Common.PieceType.King, 'k' },
         };
-        private GameStore _gameStore;
+        private InMemoryGameStore _gameStore;
 
         private string ImageNameFromPiece(Common.Piece piece)
         {

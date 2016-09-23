@@ -87,17 +87,19 @@ namespace Chess.Common
 
         private IEnumerable<SquareReference> GetAvailableMoves_Pawn(Board board, Square square)
         {
+            var start = square.Reference;
             var piece = square.Piece;
+
             var homeRow = piece.Color == Color.Black ? 1 : 6;
             var direction = piece.Color == Color.Black ? 1 : -1; // row 0 at top (black start)
             var opponentColor = piece.Color == Color.Black ? Color.White : Color.Black;
 
-            var move1 = square.Reference.Move(direction, 0);
+            var move1 = start.Move(direction, 0);
             if (move1 != null
                 && board[move1.Value].Piece.Color == Color.Empty)
             {
                 yield return move1.Value;
-                if (square.Reference.Row == homeRow)
+                if (start.Row == homeRow)
                 {
                     var move2 = move1.Value.Move(direction, 0);
                     if (move2 != null
@@ -107,7 +109,7 @@ namespace Chess.Common
                     }
                 }
             }
-            var diagMoves = new[] { square.Reference.Move(direction, 1), square.Reference.Move(direction, -1) }
+            var diagMoves = new[] { start.Move(direction, 1), start.Move(direction, -1) }
                             .WhereNotNull()
                             .Where(s => board[s].Piece.Color == opponentColor);
             foreach (var move in diagMoves)
@@ -118,7 +120,23 @@ namespace Chess.Common
 
         private IEnumerable<SquareReference> GetAvailableMoves_Rook(Board board, Square square)
         {
-            throw new NotImplementedException();
+            var start = square.Reference;
+            var piece = square.Piece;
+
+            var homeRow = piece.Color == Color.Black ? 1 : 6;
+            var direction = piece.Color == Color.Black ? 1 : -1; // row 0 at top (black start)
+            var opponentColor = piece.Color == Color.Black ? Color.White : Color.Black;
+
+            var forwardMoves = board.MovesUntilPiece(start: start, rowDelta: direction, columnDelta: 0, opponentColor: opponentColor);
+            var reverseMoves = board.MovesUntilPiece(start: start, rowDelta: -1 * direction, columnDelta: 0, opponentColor: opponentColor);
+            var leftMoves = board.MovesUntilPiece(start: start, rowDelta: 0, columnDelta: -1, opponentColor: opponentColor);
+            var rightMoves = board.MovesUntilPiece(start: start, rowDelta: 0, columnDelta: 1, opponentColor: opponentColor);
+
+            return forwardMoves
+                    .Concat(reverseMoves)
+                    .Concat(leftMoves)
+                    .Concat(rightMoves)
+                    .ToList();
         }
 
         private IEnumerable<SquareReference> GetAvailableMoves_Knight(Board board, Square square)
@@ -163,7 +181,7 @@ namespace Chess.Common
         }
     }
 
-    public static class SquareReferenceExtensions
+    public static class MoveExtensions
     {
         public static SquareReference? Move(this SquareReference start, int rowDelta, int columnDelta)
         {
@@ -177,5 +195,37 @@ namespace Chess.Common
             }
             return SquareReference.FromRowColumn(newRow, newColumn);
         }
+        public static IEnumerable<SquareReference> MovesUntilPiece(
+            this Board board,
+            SquareReference start,
+            int rowDelta,
+            int columnDelta,
+            Color opponentColor)
+        {
+            SquareReference? move = start;
+            while (true)
+            {
+                move = move.Value.Move(rowDelta, columnDelta);
+                if (move == null)
+                {
+                    yield break;
+                }
+                var piece = board[move.Value].Piece;
+                if (piece.Color == opponentColor)
+                {
+                    yield return move.Value;
+                    yield break;
+                } else if (piece.Color == Color.Empty)
+                {
+                    yield return move.Value;
+                    // yield and continue
+                } else
+                {
+                    // own color
+                    yield break;
+                }
+            }
+        }
+
     }
 }

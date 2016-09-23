@@ -27,10 +27,10 @@ namespace Chess.Common.UnitTests
     //
 
 
-    public class GameMoves_PawnTests
+    public class GameMoves_RookTests
     {
         [Fact]
-        public void StartingPosition_White()
+        public void ForwardMovesBlockedByOwnPiece_White()
         {
             GivenBoard(
             //a  b  c  d  e  f  g  h
@@ -38,16 +38,35 @@ namespace Chess.Common.UnitTests
             "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" + //7
             "                       \r\n" + //6
             "                       \r\n" + //5
+            "Wp                     \r\n" + //4
+            "                       \r\n" + //3
+            "   Wp Wp Wp Wp Wp Wp Wp\r\n" + //2
+            "Wr Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
+            );
+            WhenSelectedPieceIs("a1");
+            ThenMovesAre("a2", "a3");
+        }
+
+        [Fact]
+        public void ForwardMovesBlockedByOwnPiece_Black()
+        {
+            GivenBoard(
+            //a  b  c  d  e  f  g  h
+            "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
+            "   Bp Bp Bp Bp Bp Bp Bp\r\n" + //7
+            "                       \r\n" + //6
+            "Bp                     \r\n" + //5
             "                       \r\n" + //4
             "                       \r\n" + //3
             "Wp Wp Wp Wp Wp Wp Wp Wp\r\n" + //2
             "Wr Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
             );
-            WhenSelectedPieceIs("e2");
-            ThenMovesAre("e3", "e4");
+            WhenSelectedPieceIs("a8");
+            ThenMovesAre("a7", "a6");
         }
+
         [Fact]
-        public void StartingPosition_Black()
+        public void TakeOpposition()
         {
             GivenBoard(
             //a  b  c  d  e  f  g  h
@@ -57,14 +76,15 @@ namespace Chess.Common.UnitTests
             "                       \r\n" + //5
             "                       \r\n" + //4
             "                       \r\n" + //3
-            "Wp Wp Wp Wp Wp Wp Wp Wp\r\n" + //2
+            "   Wp Wp Wp Wp Wp Wp Wp\r\n" + //2
             "Wr Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
             );
-            WhenSelectedPieceIs("e7");
-            ThenMovesAre("e6", "e5");
+            WhenSelectedPieceIs("a1");
+            ThenMovesAre("a2", "a3", "a4", "a5", "a6", "a7");
         }
+
         [Fact]
-        public void PawnAlreadyMoved()
+        public void MultipleDirections()
         {
             GivenBoard(
             //a  b  c  d  e  f  g  h
@@ -72,69 +92,17 @@ namespace Chess.Common.UnitTests
             "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" + //7
             "                       \r\n" + //6
             "                       \r\n" + //5
-            "                       \r\n" + //4
-            "            Wp         \r\n" + //3
-            "Wp Wp Wp Wp    Wp Wp Wp\r\n" + //2
-            "Wr Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
-            );
-            WhenSelectedPieceIs("e3");
-            ThenMovesAre("e4");
-        }
-
-        [Fact]
-        public void NoMoves()
-        {
-            GivenBoard(
-            //a  b  c  d  e  f  g  h
-            "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
-            "Bp Bp Bp    Bp Bp Bp Bp\r\n" + //7
-            "                       \r\n" + //6
-            "            Bp         \r\n" + //5
-            "            Wp         \r\n" + //4
+            "         Wr            \r\n" + //4
             "                       \r\n" + //3
-            "Wp Wp Wp Wp    Wp Wp Wp\r\n" + //2
-            "Wr Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
+            "   Wp Wp Wp Wp Wp Wp Wp\r\n" + //2
+            "   Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
             );
-            WhenSelectedPieceIs("e4");
-            ThenMovesAre();
+            WhenSelectedPieceIs("d4");
+            ThenMovesAre("d5", "d6", "d7",
+                "d3",
+                "c4", "b4", "a4",
+                "e4", "f4", "g4", "h4");
         }
-
-        [Fact]
-        public void CaptureOne()
-        {
-            GivenBoard(
-            //a  b  c  d  e  f  g  h
-            "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
-            "Bp Bp Bp    Bp Bp Bp Bp\r\n" + //7
-            "                       \r\n" + //6
-            "         Bp            \r\n" + //5
-            "            Wp         \r\n" + //4
-            "                       \r\n" + //3
-            "Wp Wp Wp Wp    Wp Wp Wp\r\n" + //2
-            "Wr Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
-            );
-            WhenSelectedPieceIs("e4");
-            ThenMovesAre("d5", "e5");           // TODO - is pawn force to take?
-        }
-
-        [Fact]
-        public void CaptureTwo()
-        {
-            GivenBoard(
-            //a  b  c  d  e  f  g  h
-            "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
-            "Bp Bp Bp    Bp    Bp Bp\r\n" + //7
-            "                       \r\n" + //6
-            "         Bp    Bp      \r\n" + //5
-            "            Wp         \r\n" + //4
-            "                       \r\n" + //3
-            "Wp Wp Wp Wp    Wp Wp Wp\r\n" + //2
-            "Wr Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
-            );
-            WhenSelectedPieceIs("e4");
-            ThenMovesAre("d5", "e5", "f5");     // TODO - is pawn force to take?
-        }
-
 
         private string _board;
         private void GivenBoard(string board)
@@ -157,7 +125,7 @@ namespace Chess.Common.UnitTests
             var selectedPiece = board[_selectedSquare].Piece;
             if (selectedPiece.Color == Color.Empty)
             {
-                throw new ArgumentException("Selected square must contain a piece");
+                throw new ArgumentException("Selected starting square must contain a piece");
             }
             var game = new Game("testgame", selectedPiece.Color, board);
 

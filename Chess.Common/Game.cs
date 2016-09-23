@@ -175,9 +175,32 @@ namespace Chess.Common
             return moves;
         }
 
+        private static Movement[] BishopMovements = new[]
+       {
+            new Movement { RowDelta = 1, ColumnDelta = 1 },
+            new Movement { RowDelta = 1, ColumnDelta = -1 },
+            new Movement { RowDelta = -1, ColumnDelta = 1 },
+            new Movement { RowDelta = -1, ColumnDelta = -1 },
+        };
         private IEnumerable<SquareReference> GetAvailableMoves_Bishop(Board board, Square square)
         {
-            throw new NotImplementedException();
+            var start = square.Reference;
+            var piece = square.Piece;
+
+            var opponentColor = piece.Color == Color.Black ? Color.White : Color.Black;
+
+            var moves = BishopMovements
+                            .SelectMany(
+                                movement =>
+                                    board.MovesUntilPiece(
+                                        start: start,
+                                        rowDelta: movement.RowDelta,
+                                        columnDelta: movement.ColumnDelta,
+                                        opponentColor: opponentColor
+                                    )
+                                )
+                            .ToList();
+            return moves;
         }
 
         private IEnumerable<SquareReference> GetAvailableMoves_Queen(Board board, Square square)

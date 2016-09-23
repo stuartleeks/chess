@@ -90,6 +90,7 @@ namespace Chess.Common
             var piece = square.Piece;
             var homeRow = piece.Color == Color.Black ? 1 : 6;
             var direction = piece.Color == Color.Black ? 1 : -1; // row 0 at top (black start)
+            var opponentColor = piece.Color == Color.Black ? Color.White : Color.Black;
 
             var move1 = square.Reference.Move(direction, 0);
             if (move1 != null
@@ -106,7 +107,15 @@ namespace Chess.Common
                     }
                 }
             }
+            var diagMoves = new[] { square.Reference.Move(direction, 1), square.Reference.Move(direction, -1) }
+                            .WhereNotNull()
+                            .Where(s => board[s].Piece.Color == opponentColor);
+            foreach (var move in diagMoves)
+            {
+                yield return move;
+            }
         }
+
         private IEnumerable<SquareReference> GetAvailableMoves_Rook(Board board, Square square)
         {
             throw new NotImplementedException();

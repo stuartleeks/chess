@@ -33,7 +33,7 @@ namespace Chess.Common.UnitTests
         public void StartingPosition_White()
         {
             GivenBoard(
-            //a  b  c  c  e  f  g  h
+            //a  b  c  d  e  f  g  h
             "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
             "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" + //7
             "                       \r\n" + //6
@@ -50,7 +50,7 @@ namespace Chess.Common.UnitTests
         public void StartingPosition_Black()
         {
             GivenBoard(
-            //a  b  c  c  e  f  g  h
+            //a  b  c  d  e  f  g  h
             "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
             "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" + //7
             "                       \r\n" + //6
@@ -67,7 +67,7 @@ namespace Chess.Common.UnitTests
         public void PawnAlreadyMoved()
         {
             GivenBoard(
-            //a  b  c  c  e  f  g  h
+            //a  b  c  d  e  f  g  h
             "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
             "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" + //7
             "                       \r\n" + //6
@@ -79,6 +79,42 @@ namespace Chess.Common.UnitTests
             );
             WhenSelectedPieceIs("e3");
             ThenMovesAre("e4");
+        }
+
+        [Fact]
+        public void CaptureOne()
+        {
+            GivenBoard(
+            //a  b  c  d  e  f  g  h
+            "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
+            "Bp Bp Bp    Bp Bp Bp Bp\r\n" + //7
+            "                       \r\n" + //6
+            "         Bp            \r\n" + //5
+            "            Wp         \r\n" + //4
+            "                       \r\n" + //3
+            "Wp Wp Wp Wp    Wp Wp Wp\r\n" + //2
+            "Wr Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
+            );
+            WhenSelectedPieceIs("e4");
+            ThenMovesAre("d5", "e5");           // TODO - is pawn force to take?
+        }
+
+        [Fact]
+        public void CaptureTwo()
+        {
+            GivenBoard(
+            //a  b  c  d  e  f  g  h
+            "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
+            "Bp Bp Bp    Bp    Bp Bp\r\n" + //7
+            "                       \r\n" + //6
+            "         Bp    Bp      \r\n" + //5
+            "            Wp         \r\n" + //4
+            "                       \r\n" + //3
+            "Wp Wp Wp Wp    Wp Wp Wp\r\n" + //2
+            "Wr Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
+            );
+            WhenSelectedPieceIs("e4");
+            ThenMovesAre("d5", "e5", "f5");     // TODO - is pawn force to take?
         }
 
 

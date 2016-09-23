@@ -17,10 +17,6 @@ namespace Chess.Common
             get { return _moves.AsEnumerable(); }
         }
 
-        public Game(string id)
-        {
-            Id = id;
-        }
         public Game(string id, Color currentTurn, Board board, List<Move> moves = null)
         {
             Id = id;
@@ -32,22 +28,22 @@ namespace Chess.Common
 
         public static Game CreateStartingGame()
         {
-            return new Game(GenerateId())
-            {
-                CurrentTurn = Color.White,
-                Board = Common.Board.CreateStartingBoard()
-            };
+            return new Game(
+                GenerateId(),
+                Color.White,
+                Common.Board.CreateStartingBoard()
+            );
 
         }
 
         public Game Clone()
         {
-            return new Game(this.Id)
-            {
-                CurrentTurn = this.CurrentTurn,
-                Board = this.Board.Clone(),
-                _moves = this._moves.Select(m => m.Clone()).ToList()
-            };
+            return new Game(
+                Id,
+                CurrentTurn,
+                Board.Clone(),
+                _moves.Select(m => m.Clone()).ToList()
+            );
         }
         private static string GenerateId()
         {
@@ -176,11 +172,12 @@ namespace Chess.Common
         }
 
         private static Movement[] BishopMovements = new[]
-       {
+        {
             new Movement { RowDelta = 1, ColumnDelta = 1 },
             new Movement { RowDelta = 1, ColumnDelta = -1 },
             new Movement { RowDelta = -1, ColumnDelta = 1 },
             new Movement { RowDelta = -1, ColumnDelta = -1 },
+
         };
         private IEnumerable<SquareReference> GetAvailableMoves_Bishop(Board board, Square square)
         {
@@ -203,9 +200,37 @@ namespace Chess.Common
             return moves;
         }
 
+
+        private static Movement[] QueenMovements = new[]
+        {
+            new Movement { RowDelta = 1, ColumnDelta = 1 },
+            new Movement { RowDelta = 1, ColumnDelta = -1 },
+            new Movement { RowDelta = -1, ColumnDelta = 1 },
+            new Movement { RowDelta = -1, ColumnDelta = -1 },
+            new Movement { RowDelta = 1, ColumnDelta = 0 },
+            new Movement { RowDelta = -1, ColumnDelta = 0 },
+            new Movement { RowDelta = 0, ColumnDelta = 1 },
+            new Movement { RowDelta = 0, ColumnDelta = -1 },
+        };
         private IEnumerable<SquareReference> GetAvailableMoves_Queen(Board board, Square square)
         {
-            throw new NotImplementedException();
+            var start = square.Reference;
+            var piece = square.Piece;
+
+            var opponentColor = piece.Color == Color.Black ? Color.White : Color.Black;
+
+            var moves = QueenMovements
+                            .SelectMany(
+                                movement =>
+                                    board.MovesUntilPiece(
+                                        start: start,
+                                        rowDelta: movement.RowDelta,
+                                        columnDelta: movement.ColumnDelta,
+                                        opponentColor: opponentColor
+                                    )
+                                )
+                            .ToList();
+            return moves;
         }
 
         private IEnumerable<SquareReference> GetAvailableMoves_King(Board board, Square square)

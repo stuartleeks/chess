@@ -6,10 +6,10 @@ using Xunit;
 
 namespace Chess.Common.UnitTests
 {
-    public class GameMoves_RookTests
+    public class GameMoves_KnightTests
     {
         [Fact]
-        public void ForwardMovesBlockedByOwnPiece_White()
+        public void StartingPosition_White()
         {
             GivenBoard(
             //a  b  c  d  e  f  g  h
@@ -17,31 +17,49 @@ namespace Chess.Common.UnitTests
             "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" + //7
             "                       \r\n" + //6
             "                       \r\n" + //5
-            "Wp                     \r\n" + //4
-            "                       \r\n" + //3
-            "   Wp Wp Wp Wp Wp Wp Wp\r\n" + //2
-            "Wr Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
-            );
-            WhenSelectedPieceIs("a1");
-            ThenMovesAre("a2", "a3");
-        }
-
-        [Fact]
-        public void ForwardMovesBlockedByOwnPiece_Black()
-        {
-            GivenBoard(
-            //a  b  c  d  e  f  g  h
-            "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
-            "   Bp Bp Bp Bp Bp Bp Bp\r\n" + //7
-            "                       \r\n" + //6
-            "Bp                     \r\n" + //5
             "                       \r\n" + //4
             "                       \r\n" + //3
             "Wp Wp Wp Wp Wp Wp Wp Wp\r\n" + //2
             "Wr Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
             );
-            WhenSelectedPieceIs("a8");
-            ThenMovesAre("a7", "a6");
+            WhenSelectedPieceIs("b1");
+            ThenMovesAre("a3", "c3");
+        }
+
+        [Fact]
+        public void StartingPosition_Black()
+        {
+            GivenBoard(
+            //a  b  c  d  e  f  g  h
+            "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
+            "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" + //7
+            "                       \r\n" + //6
+            "                       \r\n" + //5
+            "                       \r\n" + //4
+            "                       \r\n" + //3
+            "Wp Wp Wp Wp Wp Wp Wp Wp\r\n" + //2
+            "Wr Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
+            );
+            WhenSelectedPieceIs("b8");
+            ThenMovesAre("a6", "c6");
+        }
+
+        [Fact]
+        public void MoveBlockedByOwnPiece()
+        {
+            GivenBoard(
+            //a  b  c  d  e  f  g  h
+            "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
+            "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" + //7
+            "                       \r\n" + //6
+            "                       \r\n" + //5
+            "                       \r\n" + //4
+            "Wp                     \r\n" + //3
+            "   Wp Wp Wp Wp Wp Wp Wp\r\n" + //2
+            "Wr Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
+            );
+            WhenSelectedPieceIs("b1");
+            ThenMovesAre("c3");
         }
 
         [Fact]
@@ -51,36 +69,15 @@ namespace Chess.Common.UnitTests
             //a  b  c  d  e  f  g  h
             "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
             "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" + //7
-            "                       \r\n" + //6
+            "            Wn         \r\n" + //6
             "                       \r\n" + //5
             "                       \r\n" + //4
             "                       \r\n" + //3
-            "   Wp Wp Wp Wp Wp Wp Wp\r\n" + //2
-            "Wr Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
+            "Wp Wp Wp Wp Wp Wp Wp Wp\r\n" + //2
+            "Wr    Wb Wq Wk Wb Wn Wr\r\n"   //1
             );
-            WhenSelectedPieceIs("a1");
-            ThenMovesAre("a2", "a3", "a4", "a5", "a6", "a7");
-        }
-
-        [Fact]
-        public void MultipleDirections()
-        {
-            GivenBoard(
-            //a  b  c  d  e  f  g  h
-            "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
-            "Bp Bp Bp Bp Bp Bp Bp Bp\r\n" + //7
-            "                       \r\n" + //6
-            "                       \r\n" + //5
-            "         Wr            \r\n" + //4
-            "                       \r\n" + //3
-            "   Wp Wp Wp Wp Wp Wp Wp\r\n" + //2
-            "   Wn Wb Wq Wk Wb Wn Wr\r\n"   //1
-            );
-            WhenSelectedPieceIs("d4");
-            ThenMovesAre("d5", "d6", "d7",
-                "d3",
-                "c4", "b4", "a4",
-                "e4", "f4", "g4", "h4");
+            WhenSelectedPieceIs("e6");
+            ThenMovesAre("d8", "f8", "c7", "g7", "c5", "g5", "d4", "f4");
         }
 
         private string _board;

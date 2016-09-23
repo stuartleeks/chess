@@ -118,30 +118,61 @@ namespace Chess.Common
             }
         }
 
+        private class Movement
+        {
+            public int RowDelta { get; set; }
+            public int ColumnDelta { get; set; }
+        }
+        private static Movement[] RookMovements = new[]
+        {
+            new Movement { RowDelta = 1, ColumnDelta = 0 },
+            new Movement { RowDelta = -1, ColumnDelta = 0 },
+            new Movement { RowDelta = 0, ColumnDelta = 1 },
+            new Movement { RowDelta = 0, ColumnDelta = -1 },
+        };
         private IEnumerable<SquareReference> GetAvailableMoves_Rook(Board board, Square square)
         {
             var start = square.Reference;
             var piece = square.Piece;
 
-            var homeRow = piece.Color == Color.Black ? 1 : 6;
-            var direction = piece.Color == Color.Black ? 1 : -1; // row 0 at top (black start)
             var opponentColor = piece.Color == Color.Black ? Color.White : Color.Black;
 
-            var forwardMoves = board.MovesUntilPiece(start: start, rowDelta: direction, columnDelta: 0, opponentColor: opponentColor);
-            var reverseMoves = board.MovesUntilPiece(start: start, rowDelta: -1 * direction, columnDelta: 0, opponentColor: opponentColor);
-            var leftMoves = board.MovesUntilPiece(start: start, rowDelta: 0, columnDelta: -1, opponentColor: opponentColor);
-            var rightMoves = board.MovesUntilPiece(start: start, rowDelta: 0, columnDelta: 1, opponentColor: opponentColor);
-
-            return forwardMoves
-                    .Concat(reverseMoves)
-                    .Concat(leftMoves)
-                    .Concat(rightMoves)
-                    .ToList();
+            var moves = RookMovements
+                            .SelectMany(
+                                movement =>
+                                    board.MovesUntilPiece(
+                                        start: start,
+                                        rowDelta: movement.RowDelta,
+                                        columnDelta: movement.ColumnDelta,
+                                        opponentColor: opponentColor
+                                    )
+                                )
+                            .ToList();
+            return moves;
         }
-
+        private static Movement[] KnightMovements = new[]
+        {
+            new Movement { RowDelta = 2, ColumnDelta = 1 },
+            new Movement { RowDelta = 2, ColumnDelta = -1 },
+            new Movement { RowDelta = 1, ColumnDelta = 2 },
+            new Movement { RowDelta = 1, ColumnDelta = -2 },
+            new Movement { RowDelta = -1, ColumnDelta = 2 },
+            new Movement { RowDelta = -1, ColumnDelta = -2 },
+            new Movement { RowDelta = -2, ColumnDelta = 1 },
+            new Movement { RowDelta = -2, ColumnDelta = -1 },
+        };
         private IEnumerable<SquareReference> GetAvailableMoves_Knight(Board board, Square square)
         {
-            throw new NotImplementedException();
+            var start = square.Reference;
+            var piece = square.Piece;
+
+            var ownColor = piece.Color;
+
+            var moves = KnightMovements
+                            .Select(m => start.Move(m.RowDelta, m.ColumnDelta))
+                            .WhereNotNull()
+                            .Where(m => board[m].Piece.Color != ownColor);
+            return moves;
         }
 
         private IEnumerable<SquareReference> GetAvailableMoves_Bishop(Board board, Square square)
@@ -215,11 +246,13 @@ namespace Chess.Common
                 {
                     yield return move.Value;
                     yield break;
-                } else if (piece.Color == Color.Empty)
+                }
+                else if (piece.Color == Color.Empty)
                 {
                     yield return move.Value;
                     // yield and continue
-                } else
+                }
+                else
                 {
                     // own color
                     yield break;

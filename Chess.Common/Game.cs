@@ -11,23 +11,22 @@ namespace Chess.Common
         public Board Board { get; private set; }
         public Color CurrentTurn { get; private set; }
 
+        private List<Move> _moves;
         public IEnumerable<Move> Moves
         {
             get { return _moves.AsEnumerable(); }
         }
 
-        private List<Move> _moves;
-
         public Game(string id)
         {
             Id = id;
         }
-        public Game(string id, Color currentTurn, Board board, List<Move> moves)
+        public Game(string id, Color currentTurn, Board board, List<Move> moves = null)
         {
             Id = id;
             CurrentTurn = currentTurn;
             Board = board;
-            _moves = moves;
+            _moves = moves ?? new List<Move>();
         }
 
 
@@ -36,8 +35,7 @@ namespace Chess.Common
             return new Game(GenerateId())
             {
                 CurrentTurn = Color.White,
-                Board = Common.Board.CreateStartingBoard(),
-                _moves = new List<Move>()
+                Board = Common.Board.CreateStartingBoard()
             };
 
         }
@@ -48,7 +46,7 @@ namespace Chess.Common
             {
                 CurrentTurn = this.CurrentTurn,
                 Board = this.Board.Clone(),
-                _moves = this._moves.Select(m=>m.Clone()).ToList()
+                _moves = this._moves.Select(m => m.Clone()).ToList()
             };
         }
         private static string GenerateId()
@@ -63,6 +61,75 @@ namespace Chess.Common
             _moves.Add(new Move(DateTime.UtcNow, square.Piece, pieceReference, endPositionReference));
             Board.MovePiece(pieceReference, endPositionReference);
             CurrentTurn = (CurrentTurn == Color.Black) ? Color.White : Color.Black;
+        }
+
+        public IEnumerable<SquareReference> GetAvailableMoves(SquareReference from)
+        {
+            var square = Board[from];
+            switch (square.Piece.PieceType)
+            {
+                case PieceType.Pawn:
+                    return GetAvailableMoves_Pawn(Board, square);
+                case PieceType.Rook:
+                    return GetAvailableMoves_Rook(Board, square);
+                case PieceType.Knight:
+                    return GetAvailableMoves_Knight(Board, square);
+                case PieceType.Bishop:
+                    return GetAvailableMoves_Bishop(Board, square);
+                case PieceType.Queen:
+                    return GetAvailableMoves_Queen(Board, square);
+                case PieceType.King:
+                    return GetAvailableMoves_King(Board, square);
+                default:
+                    throw new InvalidOperationException("Unhandled piece type!!");
+            }
+        }
+
+        private IEnumerable<SquareReference> GetAvailableMoves_Pawn(Board board, Square square)
+        {
+            var piece = square.Piece;
+            var homeRow = piece.Color == Color.Black ? 1 : 6;
+            var direction = piece.Color == Color.Black ? 1 : -1; // row 0 at top (black start)
+
+            var move1 = square.Reference.Move(direction, 0);
+            if (move1 != null
+                && board[move1.Value].Piece.Color == Color.Empty)
+            {
+                yield return move1.Value;
+                if (square.Reference.Row == homeRow)
+                {
+                    var move2 = move1.Value.Move(direction, 0);
+                    if (move2 != null
+                        && board[move2.Value].Piece.Color == Color.Empty)
+                    {
+                        yield return move2.Value;
+                    }
+                }
+            }
+        }
+        private IEnumerable<SquareReference> GetAvailableMoves_Rook(Board board, Square square)
+        {
+            throw new NotImplementedException();
+        }
+
+        private IEnumerable<SquareReference> GetAvailableMoves_Knight(Board board, Square square)
+        {
+            throw new NotImplementedException();
+        }
+
+        private IEnumerable<SquareReference> GetAvailableMoves_Bishop(Board board, Square square)
+        {
+            throw new NotImplementedException();
+        }
+
+        private IEnumerable<SquareReference> GetAvailableMoves_Queen(Board board, Square square)
+        {
+            throw new NotImplementedException();
+        }
+
+        private IEnumerable<SquareReference> GetAvailableMoves_King(Board board, Square square)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -84,6 +151,22 @@ namespace Chess.Common
         public Move Clone()
         {
             return new Move(MoveTimeUtc, Piece, Start, End);
+        }
+    }
+
+    public static class SquareReferenceExtensions
+    {
+        public static SquareReference? Move(this SquareReference start, int rowDelta, int columnDelta)
+        {
+            int newRow = start.Row + rowDelta;
+            int newColumn = start.Column + columnDelta;
+
+            if (newRow < 0 || newRow > 7
+                || newColumn < 0 || newColumn > 7)
+            {
+                return null;
+            }
+            return SquareReference.FromRowColumn(newRow, newColumn);
         }
     }
 }

@@ -11,20 +11,8 @@ namespace Chess.Common.UnitTests
     //    - need to test whether it leaves the king in check - if so not allowed!
     //  - Pawn
     //    - en passant (Look up!!)
-    //    - take piece diagonally
     //  - Rook
     //    - castling!! (need to track whether pieces have moved in Game. Add tests for this ;-) )
-    //    - forwards/backwards/sideways as many spaces up to  own piece, or up to and including opponent's piece
-    //  - Knight
-    //    -  L-shaped move into empty square or square with opponent's piece
-    //  - Bishop
-    //    - diagonally as many spaces up to own piece, or up to and including opponent piece
-    //  - Queen
-    //    - forwards/backwards/sideways as many spaces up to  own piece, or up to and including opponent's piece
-    //    - diagonally as many spaces up to own piece, or up to and including opponent's piece
-    //  - King
-    //    - any direction one space into empty square or square with opponent's piece
-    //
 
 
     public class GameMoves_PawnTests

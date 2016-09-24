@@ -61,21 +61,56 @@ namespace Chess.Common
 
         public IEnumerable<SquareReference> GetAvailableMoves(SquareReference from)
         {
+            var initialMoves = GetAvailableMoves_NoCheckTest(Board, from);
+
             var square = Board[from];
+            var piece = square.Piece;
+            var opponentColor = piece.Color == Color.Black ? Color.White : Color.Black;
+
+
+            // filter out moves that result in check
+            // brute force approach ;-)
+            // for each move, check whether there are any moves for any opponent piece after that
+            // which would end on the current player's king's square
+            // if so then we have a move that puts the player into check, so filter out
+            var nonCheckMoves = initialMoves.Where(move =>
+            {
+                var newBoard = Board.Clone();
+                newBoard.MovePiece(from: square.Reference, to: move);
+                var kingSquare = newBoard.FindPiece(piece.Color, PieceType.King).Value;
+
+                var opponentPieceReferences = Board.AllSquares()
+                                        .Where(s => s.Piece.Color == opponentColor)
+                                        .Select(s => s.Reference);
+
+                return !opponentPieceReferences.Any(
+                        squareReference => GetAvailableMoves_NoCheckTest(newBoard, squareReference)
+                                                    .Any(end => end == kingSquare.Reference)
+                    );
+             });
+
+            return nonCheckMoves;
+        }
+
+
+
+        private IEnumerable<SquareReference> GetAvailableMoves_NoCheckTest(Board board, SquareReference from)
+        {
+            var square = board[from];
             switch (square.Piece.PieceType)
             {
                 case PieceType.Pawn:
-                    return GetAvailableMoves_Pawn(Board, square);
+                    return GetAvailableMoves_Pawn(board, square);
                 case PieceType.Rook:
-                    return GetAvailableMoves_Rook(Board, square);
+                    return GetAvailableMoves_Rook(board, square);
                 case PieceType.Knight:
-                    return GetAvailableMoves_Knight(Board, square);
+                    return GetAvailableMoves_Knight(board, square);
                 case PieceType.Bishop:
-                    return GetAvailableMoves_Bishop(Board, square);
+                    return GetAvailableMoves_Bishop(board, square);
                 case PieceType.Queen:
-                    return GetAvailableMoves_Queen(Board, square);
+                    return GetAvailableMoves_Queen(board, square);
                 case PieceType.King:
-                    return GetAvailableMoves_King(Board, square);
+                    return GetAvailableMoves_King(board, square);
                 default:
                     throw new InvalidOperationException("Unhandled piece type!!");
             }
@@ -280,53 +315,5 @@ namespace Chess.Common
         }
     }
 
-    public static class MoveExtensions
-    {
-        public static SquareReference? Move(this SquareReference start, int rowDelta, int columnDelta)
-        {
-            int newRow = start.Row + rowDelta;
-            int newColumn = start.Column + columnDelta;
 
-            if (newRow < 0 || newRow > 7
-                || newColumn < 0 || newColumn > 7)
-            {
-                return null;
-            }
-            return SquareReference.FromRowColumn(newRow, newColumn);
-        }
-        public static IEnumerable<SquareReference> MovesUntilPiece(
-            this Board board,
-            SquareReference start,
-            int rowDelta,
-            int columnDelta,
-            Color opponentColor)
-        {
-            SquareReference? move = start;
-            while (true)
-            {
-                move = move.Value.Move(rowDelta, columnDelta);
-                if (move == null)
-                {
-                    yield break;
-                }
-                var piece = board[move.Value].Piece;
-                if (piece.Color == opponentColor)
-                {
-                    yield return move.Value;
-                    yield break;
-                }
-                else if (piece.Color == Color.Empty)
-                {
-                    yield return move.Value;
-                    // yield and continue
-                }
-                else
-                {
-                    // own color
-                    yield break;
-                }
-            }
-        }
-
-    }
 }

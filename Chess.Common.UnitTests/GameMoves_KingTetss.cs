@@ -50,7 +50,7 @@ namespace Chess.Common.UnitTests
             GivenBoard(
             //a  b  c  d  e  f  g  h
             "Br Bn Bb Bq Bk Bb Bn Br\r\n" + //8
-            "Bp Bp Bp    Bp Bp Bp Bp\r\n" + //7
+            "   Bp Bp Bp Bp Bp Bp Bp\r\n" + //7
             "                       \r\n" + //6
             "                       \r\n" + //5
             "         Bp Wk         \r\n" + //4
@@ -61,7 +61,7 @@ namespace Chess.Common.UnitTests
             WhenSelectedPieceIs("e4");
             ThenMovesAre("d5", "e5", "f5",
                 "d4", "f4",
-                "d3", "e3", "f3");
+                "d3", "f3");
         }
 
         private string _board;

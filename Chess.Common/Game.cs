@@ -233,9 +233,29 @@ namespace Chess.Common
             return moves;
         }
 
+        private static Movement[] KingMovements = new[]
+        {
+            new Movement { RowDelta = 1, ColumnDelta = 1 },
+            new Movement { RowDelta = 1, ColumnDelta = -1 },
+            new Movement { RowDelta = -1, ColumnDelta = 1 },
+            new Movement { RowDelta = -1, ColumnDelta = -1 },
+            new Movement { RowDelta = 1, ColumnDelta = 0 },
+            new Movement { RowDelta = -1, ColumnDelta = 0 },
+            new Movement { RowDelta = 0, ColumnDelta = 1 },
+            new Movement { RowDelta = 0, ColumnDelta = -1 },
+        };
         private IEnumerable<SquareReference> GetAvailableMoves_King(Board board, Square square)
         {
-            throw new NotImplementedException();
+            var start = square.Reference;
+            var piece = square.Piece;
+
+            var ownColor = piece.Color;
+
+            var moves = KingMovements
+                            .Select(m => start.Move(m.RowDelta, m.ColumnDelta))
+                            .WhereNotNull()
+                            .Where(m => board[m].Piece.Color != ownColor);
+            return moves;
         }
     }
 

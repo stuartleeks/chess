@@ -134,7 +134,7 @@ namespace Chess.Web.Controllers
                                             PieceImage = ImageNameFromPiece(square.Piece),
                                             PieceName = square.Piece.Color + " " + square.Piece.PieceType,
                                             SquareColour = SquareColors[(rowIndex + columnIndex) % 2],
-                                            CanSelect = square.Piece.Color != game.CurrentTurn,
+                                            CanSelect = canSelect,
                                             Reference = square.Reference,
                                             SelectUrl = selectUrl,
                                             ReferenceString = squareRef

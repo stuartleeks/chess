@@ -24,7 +24,7 @@
                             {
                                 if (square.CanSelect)
                                 {
-                                    <a href="@square.SelectUrl"><img src="~/images/board/@square.PieceImage" alt="@square.PieceName" /></a>
+                                    <a href="@square.SelectUrl"><img src="~/images/board/@square.PieceImage" alt="@square.PieceName" class="selectable-square" /></a>
                                 }
                                 else
                                 {
@@ -34,7 +34,7 @@
                             else if (square.CanSelect)
                             {
                                 @* Remove hard-coded route!! *@
-                                <a href="@square.SelectUrl"></a>
+                                <a href="@square.SelectUrl" class="selectable-square"></a>
                             }
                         </span>
                     }

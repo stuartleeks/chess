@@ -68,6 +68,11 @@ textarea {
     border-style: solid;
     border-width: thin;
 }
+.selectable-square {
+    border-color: green;
+    border-style: dashed;
+    border-width: 1.5px;
+}
 
 .board-square img {
     height: 50px;

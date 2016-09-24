@@ -114,7 +114,7 @@ namespace Chess.Web.Controllers
 
         private GameModel MapToChooseEndPositionModel(Common.Game game, Common.SquareReference selectedSquareReference)
         {
-            //Common.SquareReference[] availableMoves = game.GetAvailableMoves();
+            Common.SquareReference[] availableMoves = game.GetAvailableMoves(selectedSquareReference).ToArray();
             return new GameModel
             {
                 CurrentPlayer = game.CurrentTurn,
@@ -124,9 +124,7 @@ namespace Chess.Web.Controllers
                                 .Select((row, rowIndex) =>
                                     row.Select((square, columnIndex) =>
                                     {
-                                        // highlight any space or opponent piece
-                                        // TODO add proper available move calculation!!
-                                        bool canSelect = square.Piece.Color != game.CurrentTurn;
+                                        bool canSelect = availableMoves.Contains(square.Reference);
                                         string squareRef = square.Reference.ToString();
                                         string selectUrl = canSelect
                                                             ? Url.Action(nameof(Confirm), new { pieceSquareRef = selectedSquareReference.ToString(), endPosition = squareRef })

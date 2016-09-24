@@ -241,6 +241,7 @@ namespace Chess.Common
         {
             return Row + 17 * Column;
         }
+
         public static bool operator ==(SquareReference x, SquareReference y)
         {
             return x.Row == y.Row && x.Column == y.Column;

@@ -92,7 +92,9 @@ namespace Chess.Web.Controllers
                     Squares = game.Board.Squares
                                 .Select((row, rowIndex) =>
                                     row.Select((square, columnIndex) => {
-                                        bool canSelect = square.Piece.Color == game.CurrentTurn; // highlight current player's pieces
+                                        // highlight current player's pieces with moves
+                                        bool canSelect = square.Piece.Color == game.CurrentTurn
+                                                            && game.GetAvailableMoves(square.Reference).Any();
                                         string squareRef = square.Reference.ToString();
                                         return new BoardSquare
                                         {

@@ -10,9 +10,23 @@ namespace Chess.Common.UnitTests
     //  - All moves
     //    - need to test whether it leaves the king in check - if so not allowed!
     //  - Pawn
-    //    - en passant (Look up!!)
+    //    - en passant
+    //       From: https://en.wikipedia.org/wiki/En_passant
+    //          The conditions are:
+    //              1. the capturing pawn must be on its fifth rank;
+    //              2. the captured pawn must be on an adjacent file and must have just moved two squares in a single move(i.e.a double-step move);
+    //              3. the capture can only be made on the move immediately after the opposing pawn makes the double-step move; otherwise the right to capture it en passant is lost.
     //  - Rook
     //    - castling!! (need to track whether pieces have moved in Game. Add tests for this ;-) )
+    //       From: https://en.wikipedia.org/wiki/Castling
+    //
+    //          Castling is permissible if and only if all of the following conditions hold(Schiller 2003:19):
+    //              1. The king and the chosen rook are on the player's first rank.[3]
+    //              2. Neither the king nor the chosen rook has previously moved.
+    //              3. There are no pieces between the king and the chosen rook.
+    //              4. The king is not currently in check.
+    //              5. The king does not pass through a square that is attacked by an enemy piece.[4]
+    //              6. The king does not end up in check. (True of any legal move.)
 
 
     public class GameMoves_PawnTests
@@ -137,7 +151,7 @@ namespace Chess.Common.UnitTests
         private void ThenMovesAre(params string[] moves)
         {
             var expectedMoves = moves
-                                    .OrderBy(m=>m)
+                                    .OrderBy(m => m)
                                     .Select(m => (SquareReference)m)
                                     .ToList();
 
@@ -151,7 +165,7 @@ namespace Chess.Common.UnitTests
 
             var actualMoves = game
                                 .GetAvailableMoves(_selectedSquare)
-                                .OrderBy(s=>s.ToString())
+                                .OrderBy(s => s.ToString())
                                 .ToList();
 
             Assert.Equal(expectedMoves, actualMoves);

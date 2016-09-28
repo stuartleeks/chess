@@ -1,7 +1,8 @@
 version: '2'
 services:
   chess:
-    image: chesstest
+#    image: chesstest  # when built locally
+    image: stuartleeks/chesstest  # when pushed to docker hub
     ports: 
      - 80:5000
     environment: 

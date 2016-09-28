@@ -7,18 +7,21 @@ using MongoDB.Driver;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson;
+using Microsoft.Extensions.Configuration;
 
 namespace Chess.Web.Services
 {
     public class MongoDBGameStore : IGameStore
     {
-        // TODO - set this up via DI, config, ...
-        private static Lazy<MongoClient> _clientLazy = new Lazy<MongoClient>(() =>
-        {
-            return new MongoClient("mongodb://localhost:27017");
-        });
+        private readonly MongoClient _client;
 
         // TODO - revisit this to get look at BsonClassMap and working with Game instead of BsonDocument. (Maybe create custom Bson serialiser for Board as that was horrific!)
+
+
+        public MongoDBGameStore(MongoClient mongoClient)
+        {
+            _client = mongoClient;
+        }
 
 
         private IMongoCollection<BsonDocument> Collection
@@ -26,8 +29,7 @@ namespace Chess.Web.Services
             get
             {
                 // TODO check whether database/collection are thread-safe and should be cached
-                var client = _clientLazy.Value;
-                var database = client.GetDatabase("chess");
+                var database = _client.GetDatabase("chess");
                 var collection = database.GetCollection<BsonDocument>("games");
                 return collection;
             }

@@ -8,6 +8,11 @@ services:
       mongodbConnectionString: mongodb://mongo:27017
   mongo:
     image: mongo
+    volumes: 
+      - mongo-data:/data/db
+      
+volumes: 
+  mongo-data: {} # defaults to driver:local
 
 
     # TODO - mount data in volume so that it persists?!

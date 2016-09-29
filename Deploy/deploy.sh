@@ -10,7 +10,7 @@ kill -kill $(pgrep ssh)
 ssh -L 2375:localhost:2375 -N stuart@slacsswarmmgmt.northeurope.cloudapp.azure.com -p2200 &
 
 exitCode=$?
-if [ $exitCode -ne 0]
+if [ $exitCode -ne 0 ]
 then
     exit $exitCode
 fi;

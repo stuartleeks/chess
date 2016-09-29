@@ -57,6 +57,7 @@
       "wwwroot",
       "**/*.cshtml",
       "appsettings.json",
+      "buildNumber.json",
       "web.config"
     ]
   },

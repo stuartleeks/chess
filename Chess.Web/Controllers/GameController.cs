@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Chess.Web.Models.Game;
 using Chess.Web.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace Chess.Web.Controllers
 {
@@ -12,17 +12,26 @@ namespace Chess.Web.Controllers
     public class GameController : Controller
     {
         private readonly IGameStore _gameStore;
+        private readonly IConfiguration _configuration;
 
-        public GameController(IGameStore gameStore)
+        public GameController(IGameStore gameStore, IConfiguration configuration)
         {
             _gameStore = gameStore;
+            _configuration = configuration;
+
         }
 
         [HttpGet("", Name ="Home")]
         public IActionResult Home()
         {
             // return Ok("Hello");
-            return View();
+
+            var model = new HomeModel
+            {
+                HostName = Environment.MachineName,
+                BuildNumber = _configuration["buildNumber"]
+            };
+            return View(model);
         }
 
         [HttpPost("play/new")]

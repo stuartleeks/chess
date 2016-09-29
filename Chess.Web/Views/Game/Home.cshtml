@@ -1,4 +1,5 @@
-﻿<div class="row">
+﻿@model Chess.Web.Models.Game.HomeModel
+<div class="row">
     <div class="col-md-12">
         <form method="get" asp-action="ChoosePiece">
             <span>Enter game Id</span>
@@ -12,5 +13,13 @@
         <form method="post" asp-action="StartNew">
             <input type="submit" value="Start new game" />
         </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <ul>
+            <li>BuildNumber: @Model.BuildNumber</li>
+            <li>Host: @Model.HostName</li>
+        </ul>
     </div>
 </div>

@@ -9,7 +9,7 @@ EXPOSE 5000/tcp
 #ENV ASPNETCORE_ENVIRONMENT Development
 ENV ASPNETCORE_URLS http://*:5000
 
-ENTRYPOINT ["dotnet", "run", "--server.urls", "http://0.0.0.0:5000"]
+ENTRYPOINT ["dotnet", "Chess.Web.dll"]
 
 ARG BUILD_DATE
 ARG VCS_REF

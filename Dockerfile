@@ -20,3 +20,11 @@ ENV ASPNETCORE_ENVIRONMENT Development
 ENV ASPNETCORE_URLS http://*:5000
 
 CMD ["dotnet", "run", "--server.urls", "http://0.0.0.0:5000"]
+
+LABEL org.label-schema.name="Chess" \
+        org.label-schema.description="Demo Chess site" \
+        org.label-schema.vendor="Stuart Leeks" \
+        org.label-schema.version=$BUILD_BUILDNUMBER \
+        org.label-schema.schema-version="1.0"
+#        org.label-schema.url="e.g. https://www.example.com/" \
+#        org.label-schema.vcs-url="e.g. https://github.com/microscaling/microscaling" \

@@ -23,6 +23,8 @@ then
     exit $exitCode
 fi;
 
+sleep 1s
+
 echo docker compose pull...
 export DOCKER_HOST=:2375
 docker-compose pull
@@ -35,3 +37,6 @@ fi;
 
 echo docker compose up...
 docker-compose -p chess up -d 
+
+echo docker compose done
+kill -kill $(pgrep ssh)

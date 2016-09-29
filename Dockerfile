@@ -1,4 +1,4 @@
-FROM microsoft/aspnetcore:1.0.1
+FROM microsoft/dotnet:1.0.1-core
 
 # copy our code
 COPY ./publish/chess /app

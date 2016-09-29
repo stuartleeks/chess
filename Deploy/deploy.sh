@@ -4,7 +4,7 @@ ssh-add /ssh/acs-stuart
 
 # start ssh tunnel
 #kill -kill $(pgrep ssh)
-ssh -L 2375:localhost:2375 -N stuart@slacsswarmmgmt.northeurope.cloudapp.net -p2200 &
+ssh -L 2375:localhost:2375 -N stuart@slacsswarmmgmt.northeurope.cloudapp.azure.com -p2200 &
 
 export DOCKER_HOST=:2375
 docker-compose pull

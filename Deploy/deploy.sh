@@ -34,4 +34,4 @@ then
 fi;
 
 echo docker compose up...
-docker-compose up -d
+docker-compose -p chess up -d 

@@ -21,8 +21,10 @@ ENV ASPNETCORE_URLS http://*:5000
 
 CMD ["dotnet", "run", "--server.urls", "http://0.0.0.0:5000"]
 
-LABEL org.label-schema.name="Chess" \
+  LABEL org.label-schema.build-date=$BUILD_DATE \
+        org.label-schema.name="Chess" \
         org.label-schema.description="Demo Chess site" \
+        org.label-schema.vcs-ref=$VCS_REF \
         org.label-schema.vendor="Stuart Leeks" \
         org.label-schema.version=$BUILD_BUILDNUMBER \
         org.label-schema.schema-version="1.0"

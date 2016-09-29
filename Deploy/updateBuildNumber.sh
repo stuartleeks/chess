@@ -1,0 +1,1 @@
+echo "{\"buildNumber\" : \"$BUILD_BUILDNUMBER\"}" > Chess.Web/buildNumber.json

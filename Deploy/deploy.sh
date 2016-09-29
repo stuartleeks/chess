@@ -1,12 +1,20 @@
 #!/bin/bash
 
-echo load keys...
+echo klil ssh...
+kill -kill $(pgrep ssh-agent)
+kill -kill $(pgrep ssh)
 
+echo load keys...
 eval "$(ssh-agent -s)"
 ssh-add /ssh/acs-stuart
 
-# start ssh tunnel (aggressively kill other ssh!)
-kill -kill $(pgrep ssh)
+exitCode=$?
+if [ $exitCode -ne 0 ]
+then
+    exit $exitCode
+fi;
+
+echo ssh tunnel...
 ssh -L 2375:localhost:2375 -N stuart@slacsswarmmgmt.northeurope.cloudapp.azure.com -p2200 &
 
 exitCode=$?
@@ -15,6 +23,15 @@ then
     exit $exitCode
 fi;
 
+echo docker compose pull...
 export DOCKER_HOST=:2375
 docker-compose pull
+
+exitCode=$?
+if [ $exitCode -ne 0 ]
+then
+    exit $exitCode
+fi;
+
+echo docker compose up...
 docker-compose up -d

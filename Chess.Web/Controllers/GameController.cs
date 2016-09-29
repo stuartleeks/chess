@@ -21,6 +21,7 @@ namespace Chess.Web.Controllers
         [HttpGet("", Name ="Home")]
         public IActionResult Home()
         {
+            // return Ok("Hello");
             return View();
         }
 

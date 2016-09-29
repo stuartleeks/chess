@@ -17,10 +17,15 @@ namespace Chess.Web
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional:true, reloadOnChange: true)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile("buildNumber.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
+
+            if (env.IsDevelopment())
+            {
+                builder.AddApplicationInsightsSettings(developerMode: true);
+            }
             Configuration = builder.Build();
         }
 
@@ -37,6 +42,8 @@ namespace Chess.Web
 
             //services.UseInMemoryDb();
             services.UseMongoDb();
+
+            services.AddApplicationInsightsTelemetry(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +51,9 @@ namespace Chess.Web
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            // Add Application Insights monitoring to the request pipeline as a very first middleware.
+            app.UseApplicationInsightsRequestTelemetry();
 
             if (env.IsDevelopment())
             {
@@ -54,7 +64,9 @@ namespace Chess.Web
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+            // Add Application Insights exceptions handling to the request pipeline.
+            app.UseApplicationInsightsExceptionTelemetry();
+            
             app.UseStaticFiles();
 
             app.UseMvc(routes =>

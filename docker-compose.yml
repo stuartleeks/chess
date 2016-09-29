@@ -7,6 +7,7 @@ services:
      - 80:5000
     environment: 
       mongodbConnectionString: mongodb://mongo:27017
+      ApplicationInsights__InstrumentationKey: $APPINSIGHTS_KEY 
   mongo:
     image: mongo
     volumes: 

@@ -23,6 +23,7 @@ CMD ["dotnet", "run", "--server.urls", "http://0.0.0.0:5000"]
 
 ARG BUILD_DATE
 ARG VCS_REF
+ARG BUILD_BUILDNUMBER
 LABEL org.label-schema.build-date=$BUILD_DATE \
         org.label-schema.name="Chess" \
         org.label-schema.description="Demo Chess site" \

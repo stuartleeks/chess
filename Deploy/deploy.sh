@@ -1,6 +1,9 @@
-# load keys
+#!bin/bash
+
+echo load keys...
+
 eval "$(ssh-agent -s)"
-ssh-add /ssh/acs-stuart
+ssh-add ~/.ssh/acs-stuart
 
 # start ssh tunnel
 #kill -kill $(pgrep ssh)

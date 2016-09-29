@@ -1,15 +1,25 @@
-FROM microsoft/aspnetcore:1.0.1
+FROM microsoft/dotnet:latest
+
+# Create a layer that includes cached dependencies :-)
+COPY ./DockerStuff/project.json /DockerStuff/project.json
+WORKDIR /DockerStuff
+RUN ["dotnet", "restore"]
 
 # copy our code
-COPY ./publish/chess /app
+COPY . /app
 WORKDIR /app
+RUN ["dotnet", "restore"]
+
+# build (speed startup)
+WORKDIR /app/Chess.Web
+RUN ["dotnet", "build"]
 
 EXPOSE 5000/tcp
 
-#ENV ASPNETCORE_ENVIRONMENT Development
+ENV ASPNETCORE_ENVIRONMENT Development
 ENV ASPNETCORE_URLS http://*:5000
 
-ENTRYPOINT ["dotnet", "run", "--server.urls", "http://0.0.0.0:5000"]
+CMD ["dotnet", "run", "--server.urls", "http://0.0.0.0:5000"]
 
 ARG BUILD_DATE
 ARG VCS_REF

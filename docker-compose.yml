@@ -2,15 +2,15 @@ version: '2'
 services:
   chess:
     image: stuartleeks/chesstest
-    ports: 
+    ports:
      - 80:5000
-    environment: 
+    environment:
       mongodbConnectionString: mongodb://mongo:27017
-      ApplicationInsights__InstrumentationKey: $APPINSIGHTS_KEY 
+      ApplicationInsights__InstrumentationKey: $APPINSIGHTS_KEY
   mongo:
     image: mongo
-    volumes: 
+    volumes:
       - mongo-data:/data/db
-      
-volumes: 
+
+volumes:
   mongo-data: {} # defaults to driver:local

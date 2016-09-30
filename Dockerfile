@@ -21,5 +21,5 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
         org.label-schema.vendor="Stuart Leeks" \
         org.label-schema.version=$BUILD_BUILDNUMBER \
         org.label-schema.schema-version="1.0"
-#        org.label-schema.url="e.g. https://www.example.com/" \
-#        org.label-schema.vcs-url="e.g. https://github.com/microscaling/microscaling" \
+#        org.label-schema.url="e.g. http://chess.faux.ninja/" \
+#        org.label-schema.vcs-url="e.g. https://github.com/stuartleeks/chess" \

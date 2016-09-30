@@ -100,7 +100,8 @@ namespace Chess.Common
         private IEnumerable<SquareReference> GetAvailableMoves_NoCheckTest(Board board, SquareReference from)
         {
             var square = board[from];
-            switch (square.Piece.PieceType)
+            var pieceType = square.Piece.PieceType;
+            switch (pieceType)
             {
                 case PieceType.Pawn:
                     return GetAvailableMoves_Pawn(board, square);
@@ -115,7 +116,7 @@ namespace Chess.Common
                 case PieceType.King:
                     return GetAvailableMoves_King(board, square);
                 default:
-                    throw new InvalidOperationException("Unhandled piece type!!");
+                    throw new InvalidOperationException($"Unhandled piece type!! {pieceType}");
             }
         }
 

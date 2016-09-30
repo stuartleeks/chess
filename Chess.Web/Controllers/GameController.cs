@@ -90,8 +90,9 @@ namespace Chess.Web.Controllers
 
             _telemetryClient.TrackEvent("MovePiece", new Dictionary<string, string>
             {
+                { "GameId", game.Id },
                 { "Color" , game.CurrentTurn.ToString() },
-                { "Piece", movedPiece.ToString() },
+                { "Piece", movedPiece.PieceType.ToString() },
                 { "Captured" , capturePiece.PieceType == Common.PieceType.Empty ? null : capturePiece.PieceType.ToString() },
             });
 

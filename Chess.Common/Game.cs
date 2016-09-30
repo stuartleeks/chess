@@ -54,6 +54,12 @@ namespace Chess.Common
         public void MakeMove(SquareReference pieceReference, SquareReference endPositionReference)
         {
             // TODO - validate that the move is allowed!
+            if (Board[pieceReference].Piece.Color != CurrentTurn
+                || !GetAvailableMoves(pieceReference).Contains(endPositionReference))
+            {
+                throw new ArgumentException("Invalid move");
+            }
+
             Square square = Board[pieceReference];
             _moves.Add(new Move(DateTime.UtcNow, square.Piece, pieceReference, endPositionReference));
             Board.MovePiece(pieceReference, endPositionReference);

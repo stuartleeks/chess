@@ -97,3 +97,12 @@ textarea {
 .board-row-clear {
     clear: both;
 }
+
+footer p {
+    display:inline-block;
+    margin-right:2em;
+}
+.move-confirm-cancel  div{
+    margin-top:1em;
+    display:inline-block
+}

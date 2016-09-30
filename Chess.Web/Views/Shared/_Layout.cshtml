@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -43,6 +44,8 @@
         <hr />
         <footer>
             <p>&copy; 2016 - Chess.Web</p>
+            <p>Build: @Configuration["buildNumber"]</p>
+            <p>Host: @Environment.MachineName</p>
         </footer>
     </div>
 

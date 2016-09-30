@@ -25,13 +25,7 @@ namespace Chess.Web.Controllers
         public IActionResult Home()
         {
             // return Ok("Hello");
-
-            var model = new HomeModel
-            {
-                HostName = Environment.MachineName,
-                BuildNumber = _configuration["buildNumber"]
-            };
-            return View(model);
+            return View();
         }
 
         [HttpPost("play/new")]
@@ -42,7 +36,7 @@ namespace Chess.Web.Controllers
             return RedirectToAction(nameof(ChoosePiece), new { gameId = game.Id });
         }
 
-        [HttpGet("play/{gameId}")]
+        [HttpGet("play/{gameId}", Name ="ChoosePiece")]
         public IActionResult ChoosePiece(string gameId)
         {
             var game = _gameStore.GetGame(gameId);

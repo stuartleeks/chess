@@ -1,25 +1,18 @@
-﻿@model Chess.Web.Models.Game.HomeModel
+﻿<div class="row">
+    <div class="col-md-12">
+        <h1>Start a new game...</h1>
+        <form method="post" asp-action="StartNew">
+            <input type="submit" class="btn btn-lg btn-success" value="Start new game" />
+        </form>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-12">
+        <h1>... or join a game</h1>
         <form method="get" asp-action="ChoosePiece">
             <span>Enter game Id</span>
             <input type="text" name="gameId" value="" />
-            <input type="submit" value="Play" />
+            <input type="submit" class="btn btn-success" value="Play" />
         </form>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <form method="post" asp-action="StartNew">
-            <input type="submit" value="Start new game" />
-        </form>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <ul>
-            <li>BuildNumber: @Model.BuildNumber</li>
-            <li>Host: @Model.HostName</li>
-        </ul>
     </div>
 </div>

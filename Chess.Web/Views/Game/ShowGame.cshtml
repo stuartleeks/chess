@@ -5,11 +5,7 @@
 }
 <div class="row">
     <div class="col-md-12">
-        Current player: @Model.CurrentPlayer
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
+        <h1>Current player: @Model.CurrentPlayer</h1>
         <div class="board">
             @foreach (var row in Model.Board.Squares)
             {

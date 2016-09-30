@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Chess.Web.Models.Game;
 using Chess.Web.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.ApplicationInsights;
 
 namespace Chess.Web.Controllers
 {
@@ -14,14 +15,14 @@ namespace Chess.Web.Controllers
         private readonly IGameStore _gameStore;
         private readonly IConfiguration _configuration;
 
-        public GameController(IGameStore gameStore, IConfiguration configuration)
+        public GameController(IGameStore gameStore, IConfiguration configuration, TelemetryClient telemetryClient)
         {
             _gameStore = gameStore;
             _configuration = configuration;
-
+            _telemetryClient = telemetryClient;
         }
 
-        [HttpGet("", Name ="Home")]
+        [HttpGet("", Name = "Home")]
         public IActionResult Home()
         {
             // return Ok("Hello");
@@ -36,9 +37,11 @@ namespace Chess.Web.Controllers
             return RedirectToAction(nameof(ChoosePiece), new { gameId = game.Id });
         }
 
-        [HttpGet("play/{gameId}", Name ="ChoosePiece")]
+        [HttpGet("play/{gameId}", Name = "ChoosePiece")]
         public IActionResult ChoosePiece(string gameId)
         {
+            // TODO - check whether there are any moves!
+
             var game = _gameStore.GetGame(gameId);
 
             var model = MapToChoosePieceModel(game);
@@ -78,9 +81,19 @@ namespace Chess.Web.Controllers
             var pieceReference = (Common.SquareReference)pieceSquareRef;
             var endPositionReference = (Common.SquareReference)endPosition;
 
+            var movedPiece = game.Board[pieceReference].Piece;
+            var capturePiece = game.Board[endPositionReference].Piece;
+
             // Move the piece and save
             game.MakeMove(pieceReference, endPositionReference);
             _gameStore.Save(game);
+
+            _telemetryClient.TrackEvent("MovePiece", new Dictionary<string, string>
+            {
+                { "Color" , game.CurrentTurn.ToString() },
+                { "Piece", movedPiece.ToString() },
+                { "Captured" , capturePiece.PieceType == Common.PieceType.Empty ? null : capturePiece.PieceType.ToString() },
+            });
 
             return RedirectToAction(nameof(ChoosePiece));
         }
@@ -95,7 +108,8 @@ namespace Chess.Web.Controllers
                 {
                     Squares = game.Board.Squares
                                 .Select((row, rowIndex) =>
-                                    row.Select((square, columnIndex) => {
+                                    row.Select((square, columnIndex) =>
+                                    {
                                         // highlight current player's pieces with moves
                                         bool canSelect = square.Piece.Color == game.CurrentTurn
                                                             && game.GetAvailableMoves(square.Reference).Any();
@@ -201,6 +215,7 @@ namespace Chess.Web.Controllers
             {Common.PieceType.Queen, 'q' },
             {Common.PieceType.King, 'k' },
         };
+        private TelemetryClient _telemetryClient;
 
         private string ImageNameFromPiece(Common.Piece piece)
         {

@@ -53,10 +53,13 @@ namespace Chess.Common
 
         public void MakeMove(SquareReference pieceReference, SquareReference endPositionReference)
         {
+            // TODO - validate that the move is allowed!
             Square square = Board[pieceReference];
             _moves.Add(new Move(DateTime.UtcNow, square.Piece, pieceReference, endPositionReference));
             Board.MovePiece(pieceReference, endPositionReference);
             CurrentTurn = (CurrentTurn == Color.Black) ? Color.White : Color.Black;
+
+             // TODO - add a flag for whether the current player is in check
         }
 
         public IEnumerable<SquareReference> GetAvailableMoves(SquareReference from)

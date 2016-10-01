@@ -10,12 +10,14 @@ namespace Chess.Common
         public string Id { get; private set; }
         public Board Board { get; private set; }
         public Color CurrentTurn { get; private set; }
+        public bool CurrentPlayerInCheck { get { return IsInCheck(Board, CurrentTurn); } }
 
         private List<Move> _moves;
         public IEnumerable<Move> Moves
         {
             get { return _moves.AsEnumerable(); }
         }
+
 
         public Game(string id, Color currentTurn, Board board, List<Move> moves = null)
         {
@@ -53,7 +55,6 @@ namespace Chess.Common
 
         public void MakeMove(SquareReference pieceReference, SquareReference endPositionReference)
         {
-            // TODO - validate that the move is allowed!
             if (Board[pieceReference].Piece.Color != CurrentTurn
                 || !GetAvailableMoves(pieceReference).Contains(endPositionReference))
             {
@@ -65,7 +66,7 @@ namespace Chess.Common
             Board.MovePiece(pieceReference, endPositionReference);
             CurrentTurn = (CurrentTurn == Color.Black) ? Color.White : Color.Black;
 
-             // TODO - add a flag for whether the current player is in check
+            // TODO - add a flag for whether the current player is in check
         }
 
         public IEnumerable<SquareReference> GetAvailableMoves(SquareReference from)
@@ -74,7 +75,6 @@ namespace Chess.Common
 
             var square = Board[from];
             var piece = square.Piece;
-            var opponentColor = piece.Color == Color.Black ? Color.White : Color.Black;
 
 
             // filter out moves that result in check
@@ -86,21 +86,27 @@ namespace Chess.Common
             {
                 var newBoard = Board.Clone();
                 newBoard.MovePiece(from: square.Reference, to: move);
-                var kingSquare = newBoard.FindPiece(piece.Color, PieceType.King).Value;
 
-                var opponentPieceReferences = Board.AllSquares()
-                                        .Where(s => s.Piece.Color == opponentColor)
-                                        .Select(s => s.Reference);
-
-                return !opponentPieceReferences.Any(
-                        squareReference => GetAvailableMoves_NoCheckTest(newBoard, squareReference)
-                                                    .Any(end => end == kingSquare.Reference)
-                    );
-             });
+                return !IsInCheck(newBoard, piece.Color);
+            });
 
             return nonCheckMoves;
         }
 
+        private bool IsInCheck(Board board, Color colorToTest)
+        {
+            var opponentColor = colorToTest == Color.Black ? Color.White : Color.Black;
+            var kingSquare = board.FindPiece(colorToTest, PieceType.King).Value;
+
+            var opponentPieceReferences = board.AllSquares()
+                                    .Where(s => s.Piece.Color == opponentColor)
+                                    .Select(s => s.Reference);
+
+            return opponentPieceReferences.Any(
+                    squareReference => GetAvailableMoves_NoCheckTest(board, squareReference)
+                                                .Any(end => end == kingSquare.Reference)
+                );
+        }
 
 
         private IEnumerable<SquareReference> GetAvailableMoves_NoCheckTest(Board board, SquareReference from)

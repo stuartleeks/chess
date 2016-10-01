@@ -102,7 +102,9 @@ footer p {
     display:inline-block;
     margin-right:2em;
 }
-.move-confirm-cancel  div{
+.info-after-board{
     margin-top:1em;
+}
+.move-confirm-cancel  div{
     display:inline-block
 }

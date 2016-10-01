@@ -94,6 +94,7 @@ namespace Chess.Web.Controllers
                 { "Color" , game.CurrentTurn.ToString() },
                 { "Piece", movedPiece.PieceType.ToString() },
                 { "Captured" , capturePiece.PieceType == Common.PieceType.Empty ? null : capturePiece.PieceType.ToString() },
+                { "PutInCheck", game.CurrentPlayerInCheck.ToString() }
             });
 
             return RedirectToAction(nameof(ChoosePiece));
@@ -105,6 +106,7 @@ namespace Chess.Web.Controllers
             return new GameModel
             {
                 CurrentPlayer = game.CurrentTurn,
+                InCheck = game.CurrentPlayerInCheck,
                 Board = new Board
                 {
                     Squares = game.Board.Squares
@@ -139,6 +141,7 @@ namespace Chess.Web.Controllers
             return new GameModel
             {
                 CurrentPlayer = game.CurrentTurn,
+                InCheck = game.CurrentPlayerInCheck,
                 Board = new Board
                 {
                     Squares = game.Board.Squares

@@ -34,6 +34,12 @@ namespace Chess.Web.Controllers
         {
             var game = Common.Game.CreateStartingGame();
             _gameStore.Save(game);
+
+            _telemetryClient.TrackEvent("StartGame", new Dictionary<string, string>
+            {
+                { "GameId", game.Id }
+            });
+
             return RedirectToAction(nameof(ChoosePiece), new { gameId = game.Id });
         }
 

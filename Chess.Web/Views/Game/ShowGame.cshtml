@@ -1,6 +1,5 @@
 ﻿@model Chess.Web.Models.Game.GameModel
 @{
-    // TODO - make these mappings in the view model!
     int squaretype = 0;
 }
 <div class="row">
@@ -29,7 +28,6 @@
                             }
                             else if (square.CanSelect)
                             {
-                                @* Remove hard-coded route!! *@
                                 <a href="@square.SelectUrl" class="selectable-square"></a>
                             }
                         </span>

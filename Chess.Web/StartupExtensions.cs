@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Chess.Web.Services;
 
 namespace Chess.Web
 {
@@ -24,6 +26,17 @@ namespace Chess.Web
                 return new MongoClient(mongoConnectionString);
             });
             return services.AddTransient<Services.IGameStore, Services.MongoDBGameStore>();
+        }
+
+        public static IApplicationBuilder ConfigureAppInsights(this IApplicationBuilder app, IConfiguration configuration)
+        {
+            var telemetryConfig = Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.Active;
+            telemetryConfig.TelemetryInitializers.Add(new BuildNumberTelemetryInitializer(configuration));
+
+            var telemetryClient = new Microsoft.ApplicationInsights.TelemetryClient();
+            telemetryClient.TrackEvent("InstanceStart");
+
+            return app;
         }
     }
 }

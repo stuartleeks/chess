@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights.Channel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -49,6 +50,8 @@ namespace Chess.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            LogStartup(Configuration);
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
@@ -66,7 +69,7 @@ namespace Chess.Web
             }
             // Add Application Insights exceptions handling to the request pipeline.
             app.UseApplicationInsightsExceptionTelemetry();
-            
+
             app.UseStaticFiles();
 
             app.UseMvc(routes =>
@@ -75,6 +78,30 @@ namespace Chess.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        private void LogStartup(IConfiguration configuration)
+        {
+            var telemetryConfig = Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.Active;
+            telemetryConfig.TelemetryInitializers.Add(new BuildNumberTelemttryInitializer(configuration));
+
+            var telemetryClient = new Microsoft.ApplicationInsights.TelemetryClient();
+            telemetryClient.TrackEvent("InstanceStart");
+        }
+    }
+
+    // TODO move this to another file!
+    public class BuildNumberTelemttryInitializer : Microsoft.ApplicationInsights.Extensibility.ITelemetryInitializer
+    {
+        private readonly IConfiguration _configuration;
+        public BuildNumberTelemttryInitializer (IConfiguration configuration)
+        {
+          _configuration = configuration;
+        }
+        public void Initialize(ITelemetry telemetry)
+        {
+            var buildNumber = _configuration["buildNumber"];
+            telemetry.Context.Properties["BuildNumber"] = buildNumber;
         }
     }
 }

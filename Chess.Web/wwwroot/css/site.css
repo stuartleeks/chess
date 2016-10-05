@@ -62,7 +62,36 @@ textarea {
     box-sizing: content-box;
     float: left;
 }
+.board-square img {
+    height: 50px;
+}
 
+
+@media screen and (max-width: 400px) {
+    .board{
+        height:240px;
+        width:240px;
+    }
+    .board-square {
+        height: 30px;
+        width: 30px;
+    }
+    .board-square img {
+        height: 30px;
+    }
+
+    .board-square a {
+        height: 30px;
+        width: 30px;
+    }
+}
+
+
+.board-square a {
+    height: 50px;
+    width: 50px;
+    display: inline-block;
+}
 .selected-square {
     border-color: red;
     border-style: solid;
@@ -74,15 +103,7 @@ textarea {
     border-width: 1.5px;
 }
 
-.board-square img {
-    height: 50px;
-}
 
-.board-square a {
-    height: 50px;
-    width: 50px;
-    display: inline-block;
-}
 
 .board-square-white {
     color: #b58863;
@@ -98,17 +119,6 @@ textarea {
     clear: both;
 }
 
-@media screen and (max-width: 600px) {
-    .board-square img {
-        height: 30px;
-    }
-
-    .board-square a {
-        height: 30px;
-        width: 30px;
-        display: inline-block;
-    }
-}
 
 footer p {
     display:inline-block;

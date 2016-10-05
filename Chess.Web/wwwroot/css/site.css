@@ -98,6 +98,18 @@ textarea {
     clear: both;
 }
 
+@media screen and (max-width: 600px) {
+    .board-square img {
+        height: 30px;
+    }
+
+    .board-square a {
+        height: 30px;
+        width: 30px;
+        display: inline-block;
+    }
+}
+
 footer p {
     display:inline-block;
     margin-right:2em;

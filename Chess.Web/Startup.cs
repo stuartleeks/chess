@@ -55,8 +55,14 @@ namespace Chess.Web
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            var logger = loggerFactory.CreateLogger("Startup");
+            var temp = Configuration["SKIP_APPINSIGHTS"];
+            bool skipAppInsights = temp == "1" || temp?.ToLower() =="true";
+            logger.LogInformation($"SKIP_APPINSIGHTS: {skipAppInsights}");
+
             // Add Application Insights monitoring to the request pipeline as a very first middleware.
-            app.UseApplicationInsightsRequestTelemetry();
+            if (!skipAppInsights)
+                app.UseApplicationInsightsRequestTelemetry();
 
             if (env.IsDevelopment())
             {
@@ -68,7 +74,8 @@ namespace Chess.Web
                 app.UseExceptionHandler("/Home/Error");
             }
             // Add Application Insights exceptions handling to the request pipeline.
-            app.UseApplicationInsightsExceptionTelemetry();
+            if (!skipAppInsights)
+                app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseStaticFiles();
 

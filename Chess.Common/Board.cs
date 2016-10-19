@@ -6,6 +6,7 @@ using System.Text;
 namespace Chess.Common
 {
     // TODO - consider supporting https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
+    // TODO - Game and Board etc have methods that steer towards an immutable model => we should enforce it in the object structure!
     public class Board
     {
         public Square[][] Squares { get; set; }
@@ -133,11 +134,13 @@ namespace Chess.Common
         {
             get { return Squares[reference.Row][reference.Column]; }
         }
-        public void MovePiece(SquareReference from, SquareReference to)
+        public Board MovePiece(SquareReference from, SquareReference to)
         {
+            var newBoard = Clone();
             var piece = Squares[from.Row][from.Column].Piece;
-            Squares[from.Row][from.Column].Piece = Piece.Empty;
-            Squares[to.Row][to.Column].Piece = piece;
+            newBoard.Squares[from.Row][from.Column].Piece = Piece.Empty;
+            newBoard.Squares[to.Row][to.Column].Piece = piece;
+            return newBoard;
         }
         public string Dump()
         {

@@ -1,4 +1,7 @@
 ﻿@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@{
+    var vorlonUrl = Configuration["VORLON_URL"];
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,7 +17,10 @@
     </environment>
     <link rel="stylesheet" href="~/css/bootstrap.min.css" />
     @Html.ApplicationInsightsJavaScript(TelemetryConfiguration)
+    @if (!string.IsNullOrEmpty(vorlonUrl))
+    {
     <script src="http://chess.faux.ninja:1337/vorlon.js"></script>
+    }
 </head>
 <body>
     <div class="navbar navbar-default navbar-fixed-top">

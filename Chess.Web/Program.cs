@@ -12,7 +12,13 @@ namespace Chess.Web
         public static void Main(string[] args)
         {
             var host = new WebHostBuilder()
-                .UseKestrel()
+                .UseKestrel(options=>
+                {
+                    if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("KESTREL_LOGGING")))
+                    {
+                        options.UseConnectionLogging();
+                    }
+                })
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()

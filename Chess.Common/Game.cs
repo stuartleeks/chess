@@ -10,12 +10,12 @@ namespace Chess.Common
         public string Id { get; private set; }
         public Board Board { get; private set; }
         public Color CurrentTurn { get; private set; }
-        public bool CurrentPlayerInCheck { get { return IsInCheck(Board, CurrentTurn); } }
+        public bool CurrentPlayerInCheck { get { return IsInCheck(this, CurrentTurn); } }
 
         private List<Move> _moves;
-        public IEnumerable<Move> Moves
+        public IList<Move> Moves
         {
-            get { return _moves.AsEnumerable(); }
+            get { return _moves.AsEnumerable().ToList(); }
         }
 
 
@@ -53,25 +53,35 @@ namespace Chess.Common
             return Guid.NewGuid().ToString();
         }
 
-        public void MakeMove(SquareReference pieceReference, SquareReference endPositionReference)
+        public Game MakeMove(SquareReference from, SquareReference to)
         {
-            if (Board[pieceReference].Piece.Color != CurrentTurn
-                || !GetAvailableMoves(pieceReference).Contains(endPositionReference))
+            return MakeMove_Internal(from, to, suppressValidityCheck: false);
+        }
+        private Game MakeMove_Internal(SquareReference from, SquareReference to, bool suppressValidityCheck)
+        {
+            if (!suppressValidityCheck) // GetAvailable moves calls this, so this flag avoids StackOverflowException ;-)
             {
-                throw new ArgumentException("Invalid move");
+                if (Board[from].Piece.Color != CurrentTurn
+                    || !GetAvailableMoves(from).Contains(to))
+                {
+                    throw new ArgumentException("Invalid move");
+                }
             }
 
-            Square square = Board[pieceReference];
-            _moves.Add(new Move(DateTime.UtcNow, square.Piece, pieceReference, endPositionReference));
-            Board.MovePiece(pieceReference, endPositionReference);
-            CurrentTurn = (CurrentTurn == Color.Black) ? Color.White : Color.Black;
-
+            Square square = Board[from];
+            var newGame = new Game(
+                id: Id,
+                currentTurn: (CurrentTurn == Color.Black) ? Color.White : Color.Black,
+                board: Board.MovePiece(from, to),
+                moves: _moves.Concat(new[] { new Move(DateTime.UtcNow, square.Piece, from, to) }).ToList()
+            );
+            return newGame;
             // TODO - add a flag for whether the current player is in check
         }
 
         public IEnumerable<SquareReference> GetAvailableMoves(SquareReference from)
         {
-            var initialMoves = GetAvailableMoves_NoCheckTest(Board, from);
+            var initialMoves = GetAvailableMoves_NoCheckTest(this, from);
 
             var square = Board[from];
             var piece = square.Piece;
@@ -84,17 +94,17 @@ namespace Chess.Common
             // if so then we have a move that puts the player into check, so filter out
             var nonCheckMoves = initialMoves.Where(move =>
             {
-                var newBoard = Board.Clone();
-                newBoard.MovePiece(from: square.Reference, to: move);
+                var newGame = MakeMove_Internal(from: square.Reference, to: move, suppressValidityCheck: true);
 
-                return !IsInCheck(newBoard, piece.Color);
+                return !IsInCheck(newGame, piece.Color);
             });
 
             return nonCheckMoves;
         }
 
-        private bool IsInCheck(Board board, Color colorToTest)
+        private bool IsInCheck(Game game, Color colorToTest)
         {
+            var board = game.Board;
             var opponentColor = colorToTest == Color.Black ? Color.White : Color.Black;
             var kingSquare = board.FindPiece(colorToTest, PieceType.King).Value;
 
@@ -103,43 +113,59 @@ namespace Chess.Common
                                     .Select(s => s.Reference);
 
             return opponentPieceReferences.Any(
-                    squareReference => GetAvailableMoves_NoCheckTest(board, squareReference)
+                    squareReference => GetAvailableMoves_NoCheckTest(game, squareReference)
                                                 .Any(end => end == kingSquare.Reference)
                 );
         }
 
 
-        private IEnumerable<SquareReference> GetAvailableMoves_NoCheckTest(Board board, SquareReference from)
+        private IEnumerable<SquareReference> GetAvailableMoves_NoCheckTest(Game game, SquareReference from)
         {
-            var square = board[from];
+            var square = game.Board[from];
             var pieceType = square.Piece.PieceType;
             switch (pieceType)
             {
                 case PieceType.Pawn:
-                    return GetAvailableMoves_Pawn(board, square);
+                    return GetAvailableMoves_Pawn(game, square);
                 case PieceType.Rook:
-                    return GetAvailableMoves_Rook(board, square);
+                    return GetAvailableMoves_Rook(game, square);
                 case PieceType.Knight:
-                    return GetAvailableMoves_Knight(board, square);
+                    return GetAvailableMoves_Knight(game, square);
                 case PieceType.Bishop:
-                    return GetAvailableMoves_Bishop(board, square);
+                    return GetAvailableMoves_Bishop(game, square);
                 case PieceType.Queen:
-                    return GetAvailableMoves_Queen(board, square);
+                    return GetAvailableMoves_Queen(game, square);
                 case PieceType.King:
-                    return GetAvailableMoves_King(board, square);
+                    return GetAvailableMoves_King(game, square);
                 default:
                     throw new InvalidOperationException($"Unhandled piece type!! {pieceType}");
             }
         }
 
-        private IEnumerable<SquareReference> GetAvailableMoves_Pawn(Board board, Square square)
+        private class Movement
         {
+            public int RowDelta { get; set; }
+            public int ColumnDelta { get; set; }
+        }
+        private static Movement[] PawnEnPassantMovements = new[]
+        {
+            new Movement { RowDelta = 1, ColumnDelta = 1 },
+            new Movement { RowDelta = 1, ColumnDelta = -1 },
+        };
+        private IEnumerable<SquareReference> GetAvailableMoves_Pawn(Game game, Square square)
+        {
+            return GetAvailableMoves_Pawn_Inner(game, square).Distinct();
+        }
+        private IEnumerable<SquareReference> GetAvailableMoves_Pawn_Inner(Game game, Square square)
+        {
+            var board = game.Board;
             var start = square.Reference;
             var piece = square.Piece;
 
             var homeRow = piece.Color == Color.Black ? 1 : 6;
             var direction = piece.Color == Color.Black ? 1 : -1; // row 0 at top (black start)
             var opponentColor = piece.Color == Color.Black ? Color.White : Color.Black;
+            var opponentHomeRow = opponentColor == Color.Black ? 1 : 6;
 
             var move1 = start.Move(direction, 0);
             if (move1 != null
@@ -163,13 +189,32 @@ namespace Chess.Common
             {
                 yield return move;
             }
+
+            if (square.Reference.Row == opponentHomeRow + -2 * direction) {
+                // we're two rows away from the opponent home row, so consider en passant
+                var enpassantMoves = PawnEnPassantMovements
+                                            .Select(m => new {
+                                                endLocation = start.Move(m.RowDelta * direction, m.ColumnDelta),
+                                                enPassantPawnLocation = start.Move(0, m.ColumnDelta)
+                                            })
+                                            .Where(m =>
+                                                m.endLocation != null
+                                                    && m.enPassantPawnLocation != null
+                                                    && board[m.enPassantPawnLocation.Value].Piece.Color == opponentColor
+                                                    && board[m.enPassantPawnLocation.Value].Piece.PieceType == PieceType.Pawn
+                                                    && (game.Moves.Count > 1
+                                                            && game.Moves[game.Moves.Count - 1].End == m.enPassantPawnLocation // check that the last move was for the pawn that we're considering
+                                                            && game.Moves[game.Moves.Count - 1].Start.Row == opponentHomeRow // piece started on its home row
+                                                    )
+                                            );
+                foreach (var move in enpassantMoves)
+                {
+                    yield return move.endLocation.Value;
+                }
+            }
         }
 
-        private class Movement
-        {
-            public int RowDelta { get; set; }
-            public int ColumnDelta { get; set; }
-        }
+
         private static Movement[] RookMovements = new[]
         {
             new Movement { RowDelta = 1, ColumnDelta = 0 },
@@ -177,8 +222,9 @@ namespace Chess.Common
             new Movement { RowDelta = 0, ColumnDelta = 1 },
             new Movement { RowDelta = 0, ColumnDelta = -1 },
         };
-        private IEnumerable<SquareReference> GetAvailableMoves_Rook(Board board, Square square)
+        private IEnumerable<SquareReference> GetAvailableMoves_Rook(Game game, Square square)
         {
+            var board = game.Board;
             var start = square.Reference;
             var piece = square.Piece;
 
@@ -208,8 +254,9 @@ namespace Chess.Common
             new Movement { RowDelta = -2, ColumnDelta = 1 },
             new Movement { RowDelta = -2, ColumnDelta = -1 },
         };
-        private IEnumerable<SquareReference> GetAvailableMoves_Knight(Board board, Square square)
+        private IEnumerable<SquareReference> GetAvailableMoves_Knight(Game game, Square square)
         {
+            var board = game.Board;
             var start = square.Reference;
             var piece = square.Piece;
 
@@ -230,8 +277,9 @@ namespace Chess.Common
             new Movement { RowDelta = -1, ColumnDelta = -1 },
 
         };
-        private IEnumerable<SquareReference> GetAvailableMoves_Bishop(Board board, Square square)
+        private IEnumerable<SquareReference> GetAvailableMoves_Bishop(Game game, Square square)
         {
+            var board = game.Board;
             var start = square.Reference;
             var piece = square.Piece;
 
@@ -263,8 +311,9 @@ namespace Chess.Common
             new Movement { RowDelta = 0, ColumnDelta = 1 },
             new Movement { RowDelta = 0, ColumnDelta = -1 },
         };
-        private IEnumerable<SquareReference> GetAvailableMoves_Queen(Board board, Square square)
+        private IEnumerable<SquareReference> GetAvailableMoves_Queen(Game game, Square square)
         {
+            var board = game.Board;
             var start = square.Reference;
             var piece = square.Piece;
 
@@ -295,8 +344,9 @@ namespace Chess.Common
             new Movement { RowDelta = 0, ColumnDelta = 1 },
             new Movement { RowDelta = 0, ColumnDelta = -1 },
         };
-        private IEnumerable<SquareReference> GetAvailableMoves_King(Board board, Square square)
+        private IEnumerable<SquareReference> GetAvailableMoves_King(Game game, Square square)
         {
+            var board = game.Board;
             var start = square.Reference;
             var piece = square.Piece;
 

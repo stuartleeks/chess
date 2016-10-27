@@ -73,8 +73,8 @@ namespace Chess.Web.Controllers
             var pieceReference = (Common.SquareReference)pieceSquareRef;
             var endPositionReference = (Common.SquareReference)endPosition;
 
-            // Move the piece on our copy
-            game.Board.MovePiece(pieceReference, endPositionReference);
+            // Move the piece on a copy
+            game = new Common.Game(game.Id, game.CurrentTurn, game.Board.MovePiece(pieceReference, endPositionReference), game.Moves.ToList());
             var model = MapToConfirmModel(game, pieceReference, endPositionReference);
             return View(model);
         }
@@ -91,7 +91,7 @@ namespace Chess.Web.Controllers
             var capturePiece = game.Board[endPositionReference].Piece;
 
             // Move the piece and save
-            game.MakeMove(pieceReference, endPositionReference);
+            game = game.MakeMove(pieceReference, endPositionReference);
             _gameStore.Save(game);
 
             _telemetryClient.TrackEvent("MovePiece", new Dictionary<string, string>

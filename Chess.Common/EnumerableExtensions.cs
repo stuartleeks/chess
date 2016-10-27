@@ -14,6 +14,12 @@ namespace Chess.Common
                         .Where(NotNull)
                         .Select(item => item.Value);
         }
+        public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T> items)
+            where T : class
+        {
+            return items
+                        .Where(NotNull);
+        }
         private static bool NotNull<T>(T item)
         {
             return item != null;

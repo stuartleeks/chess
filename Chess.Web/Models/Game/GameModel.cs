@@ -10,6 +10,8 @@ namespace Chess.Web.Models.Game
     {
         public Board Board { get; set; }
         public Common.Color CurrentPlayer { get; set; }
+        public Common.Color Opponent { get; set; }
+        public bool HasMoves { get; set; }
         public bool InCheck { get; set; }
     }
     public class Board

@@ -51,6 +51,17 @@ namespace Chess.Web.Controllers
             var game = _gameStore.GetGame(gameId);
 
             var model = MapToChoosePieceModel(game);
+            if (model.InCheck && !model.HasMoves)
+            {
+                // Checkmate
+                _telemetryClient.TrackEvent("GameEnd", new Dictionary<string, string>
+                {
+                    { "GameId", game.Id },
+                    { "EndType", "checkmate" },
+                    { "WinningColor" , model.Opponent.ToString() },
+                });
+                return View("Checkmate", model);
+            }
             return View("ShowGame", model);
         }
 
@@ -109,9 +120,11 @@ namespace Chess.Web.Controllers
         static readonly string[] SquareColors = new[] { "white", "black" };
         private GameModel MapToChoosePieceModel(Common.Game game)
         {
-            return new GameModel
+            var hasMoves = false;
+            var model = new GameModel
             {
                 CurrentPlayer = game.CurrentTurn,
+                Opponent= game.CurrentTurn == Common.Color.Black ? Common.Color.White : Common.Color.Black,
                 InCheck = game.CurrentPlayerInCheck,
                 Board = new Board
                 {
@@ -122,6 +135,10 @@ namespace Chess.Web.Controllers
                                         // highlight current player's pieces with moves
                                         bool canSelect = square.Piece.Color == game.CurrentTurn
                                                             && game.GetAvailableMoves(square.Reference).Any();
+                                        if (canSelect)
+                                        {
+                                            hasMoves = true;
+                                        }
                                         string squareRef = square.Reference.ToString();
                                         return new BoardSquare
                                         {
@@ -139,6 +156,8 @@ namespace Chess.Web.Controllers
                                 ).ToArray()
                 }
             };
+            model.HasMoves = hasMoves;
+            return model;
         }
 
         private GameModel MapToChooseEndPositionModel(Common.Game game, Common.SquareReference selectedSquareReference)
@@ -147,6 +166,7 @@ namespace Chess.Web.Controllers
             return new GameModel
             {
                 CurrentPlayer = game.CurrentTurn,
+                Opponent= game.CurrentTurn == Common.Color.Black ? Common.Color.White : Common.Color.Black,
                 InCheck = game.CurrentPlayerInCheck,
                 Board = new Board
                 {
@@ -185,6 +205,7 @@ namespace Chess.Web.Controllers
             return new GameModel
             {
                 CurrentPlayer = game.CurrentTurn,
+                Opponent= game.CurrentTurn == Common.Color.Black ? Common.Color.White : Common.Color.Black,
                 Board = new Board
                 {
                     Squares = game.Board.Squares

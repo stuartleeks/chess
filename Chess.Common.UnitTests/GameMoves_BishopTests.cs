@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Chess.Common.UnitTests
 {
-    public class GameMoves_BishopTests
+    public class GameMoves_BishopTests : GameMoves_TestBase
     {
         [Fact]
         public void MovesBlockedByOwnPiece_White()
@@ -63,39 +63,6 @@ namespace Chess.Common.UnitTests
                 "c5", "b6", "a7",
                 "c3",
                 "e3");
-        }
-
-        private string _board;
-        private void GivenBoard(string board)
-        {
-            _board = board;
-        }
-        private SquareReference _selectedSquare;
-        private void WhenSelectedPieceIs(string selectedSquare)
-        {
-            _selectedSquare = selectedSquare;
-        }
-        private void ThenMovesAre(params string[] moves)
-        {
-            var expectedMoves = moves
-                                    .OrderBy(m=>m)
-                                    .Select(m => (SquareReference)m)
-                                    .ToList();
-
-            var board = Board.Parse(_board);
-            var selectedPiece = board[_selectedSquare].Piece;
-            if (selectedPiece.Color == Color.Empty)
-            {
-                throw new ArgumentException("Selected starting square must contain a piece");
-            }
-            var game = new Game("testgame", selectedPiece.Color, board);
-
-            var actualMoves = game
-                                .GetAvailableMoves(_selectedSquare)
-                                .OrderBy(s=>s.ToString())
-                                .ToList();
-
-            Assert.Equal(expectedMoves, actualMoves);
         }
     }
 }

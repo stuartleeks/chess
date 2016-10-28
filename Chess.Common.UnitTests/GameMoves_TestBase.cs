@@ -7,8 +7,6 @@ using Xunit;
 namespace Chess.Common.UnitTests
 {
     // TODO - test notes
-    //  - All moves
-    //    - need to test whether it leaves the king in check - if so not allowed!
     //  - Pawn
     //    - Promotion!
     //  - King

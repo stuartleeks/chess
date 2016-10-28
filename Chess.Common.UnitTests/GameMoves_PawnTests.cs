@@ -11,7 +11,7 @@ namespace Chess.Common.UnitTests
     //    - need to test whether it leaves the king in check - if so not allowed!
     //  - Pawn
     //    - Promotion!
-    //  - Rook
+    //  - King
     //    - castling!! (need to track whether pieces have moved in Game. Add tests for this ;-) )
     //       From: https://en.wikipedia.org/wiki/Castling
     //

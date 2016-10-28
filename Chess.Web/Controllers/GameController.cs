@@ -25,7 +25,6 @@ namespace Chess.Web.Controllers
         [HttpGet("", Name = "Home")]
         public IActionResult Home()
         {
-            // return Ok("Hello");
             return View();
         }
 
@@ -51,18 +50,34 @@ namespace Chess.Web.Controllers
             var game = _gameStore.GetGame(gameId);
 
             var model = MapToChoosePieceModel(game);
-            if (model.InCheck && !model.HasMoves)
+            if (model.HasMoves)
             {
-                // Checkmate
-                _telemetryClient.TrackEvent("GameEnd", new Dictionary<string, string>
-                {
-                    { "GameId", game.Id },
-                    { "EndType", "checkmate" },
-                    { "WinningColor" , model.Opponent.ToString() },
-                });
-                return View("Checkmate", model);
+                return View("ShowGame", model);
             }
-            return View("ShowGame", model);
+            else
+            {
+                if (model.InCheck)
+                {
+                    // Checkmate
+                    _telemetryClient.TrackEvent("GameEnd", new Dictionary<string, string>
+                    {
+                        { "GameId", game.Id },
+                        { "EndType", "checkmate" },
+                        { "WinningColor" , model.Opponent.ToString() },
+                    });
+                    return View("Checkmate", model);
+                }
+                else
+                {
+                    // Stalemate
+                    _telemetryClient.TrackEvent("GameEnd", new Dictionary<string, string>
+                    {
+                        { "GameId", game.Id },
+                        { "EndType", "Stalemate" },
+                    });
+                    return View("Stalemate", model);
+                }
+            }
         }
 
         // TODO - enable binding for SquareReference type

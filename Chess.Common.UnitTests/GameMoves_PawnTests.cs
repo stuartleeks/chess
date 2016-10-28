@@ -10,12 +10,7 @@ namespace Chess.Common.UnitTests
     //  - All moves
     //    - need to test whether it leaves the king in check - if so not allowed!
     //  - Pawn
-    //    - en passant
-    //       From: https://en.wikipedia.org/wiki/En_passant
-    //          The conditions are:
-    //              1. the capturing pawn must be on its fifth rank;
-    //              2. the captured pawn must be on an adjacent file and must have just moved two squares in a single move(i.e.a double-step move);
-    //              3. the capture can only be made on the move immediately after the opposing pawn makes the double-step move; otherwise the right to capture it en passant is lost.
+    //    - Promotion!
     //  - Rook
     //    - castling!! (need to track whether pieces have moved in Game. Add tests for this ;-) )
     //       From: https://en.wikipedia.org/wiki/Castling
@@ -27,6 +22,15 @@ namespace Chess.Common.UnitTests
     //              4. The king is not currently in check.
     //              5. The king does not pass through a square that is attacked by an enemy piece.[4]
     //              6. The king does not end up in check. (True of any legal move.)
+    //  - Draws (https://en.wikipedia.org/wiki/Chess#End_of_the_game)
+    //    - Draw by agreement – draws are most commonly reached by mutual agreement between the players.The correct procedure is to verbally offer the draw, make a move, then start the opponent's clock. Traditionally players have been allowed to agree a draw at any time in the game, occasionally even without playing a move; in recent years efforts have been made to discourage short draws, for example by forbidding draw offers before move thirty.
+    //    - Stalemate – the player whose turn it is to move is not in check, but has no legal move.
+    //    - Threefold repetition of a position – this most commonly occurs when neither side is able to avoid repeating moves without incurring a disadvantage.In this situation, either player may claim a draw; this requires the players to keep a valid written record of the game so that the claim may be verified by the arbiter if challenged.The three occurrences of the position need not occur on consecutive moves for a claim to be valid.FIDE rules make no mention of perpetual check; this is merely a specific type of draw by threefold repetition.
+    //    - The fifty-move rule – if during the previous 50 moves no pawn has been moved and no capture has been made, either player may claim a draw, as for the threefold-repetition rule. There are in fact several known endgames where it is theoretically possible to force a mate but which require more than 50 moves before the pawn move or capture is made; examples include some endgames with two knights against a pawn and some pawnless endgames such as queen against two bishops. These endings are rare, however, and few players study them in detail, so the fifty-move rule is considered practical for over the board play. Some correspondence chess organizations allow exceptions to the fifty-move rule.[note 2]
+    //    - Fivefold repetition of a position, similar to the threefold-repetition rule, but in this case no player needs to claim the draw for the game to be drawn.This rule took effect on 1 July 2014. It establishes that there is a theoretical upper bound on the length of lawful chess games.
+    //    - The seventy-five-move rule, similar to the fifty-move rule; however, if the final move in the sequence resulted in checkmate, this takes precedence. As for the fivefold-repetition rule, this applies independently of claims by the players.The rule also took effect on 1 July 2014 and also establishes, independently, an upper bound on the game length
+    //    - Insufficient material – a player may claim a draw if their opponent has insufficient material to checkmate, for example if the player has only the king left and the opponent has only the king and a bishop.Such a claim is only valid if checkmate is impossible.Under the revised rule that took effect on 1 July 2009, which only refers to the impossibility of reaching checkmate without explicitly relating this to the players' material, the game is ended immediately in a draw, not requiring a claim by a player.
+    //         - insufficient material (https://en.wikipedia.org/wiki/Glossary_of_chess#Insufficient_material) : An endgame scenario in which all pawns have been captured, and one side has only its king remaining while the other has only its king, a king plus a knight, or a king plus a bishop.A king plus bishop versus a king plus bishop with the bishops on the same color is also a draw, since neither side can checkmate, regardless of play.Situations where checkmate is possible only if the inferior side blunders are covered by the fifty-move rule.See Draw (chess)#Draws in all games.
 
 
     public class GameMoves_PawnTests
@@ -237,7 +241,7 @@ namespace Chess.Common.UnitTests
                 _currentTurn = selectedPiece.Color;
             }
 
-            var game = new Game("testgame", _currentTurn.Value,  board);
+            var game = new Game("testgame", _currentTurn.Value, board);
             Console.WriteLine("Foo");
             foreach (var move in _moves)
             {

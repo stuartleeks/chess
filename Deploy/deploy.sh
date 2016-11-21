@@ -2,7 +2,7 @@
 
 # echo klil ssh...
 # kill -kill $(pgrep ssh-agent)
-# kill -kill $(pgrep ssh)
+kill -kill $(pgrep ssh)
 
 # echo load keys...
 # eval "$(ssh-agent -s)"

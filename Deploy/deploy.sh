@@ -15,7 +15,9 @@ kill -kill $(pgrep ssh)
 # fi;
 
 echo ssh tunnel...
-ssh -L 2375:localhost:2375 -N stuart@slacs-swarmmgmt.northeurope.cloudapp.azure.com -p2200 -i /ssh/acs-stuart &
+# TODO parameterise this!
+# ssh -L 2375:localhost:2375 -N stuart@slacs-swarmmgmt.northeurope.cloudapp.azure.com -p2200 -i /ssh/acs-stuart &
+ssh -L 2375:localhost:2375 -N stuart@slacs-dcosmgmt.northeurope.cloudapp.azure.com -p2200 -i /ssh/acs-stuart &
 
 exitCode=$?
 if [ $exitCode -ne 0 ]

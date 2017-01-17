@@ -16,9 +16,9 @@ kill -kill $(pgrep ssh)
 
 echo ssh tunnel...
 # TODO parameterise this!
-# ssh -L 2375:localhost:2375 -N stuart@slacs-swarmmgmt.northeurope.cloudapp.azure.com -p2200 -i /ssh/acs-stuart &
 # Turned off StrictHostKeyChecking to simplify setting up new agents to build ;-)
-ssh -L 2375:localhost:2375 -N stuart@slacs-dcosmgmt.northeurope.cloudapp.azure.com -p2200 -i /ssh/acs-stuart -oStrictHostKeyChecking=no &
+ssh -L 2375:localhost:2375 -N stuart@slacs-swarmmgmt.northeurope.cloudapp.azure.com -p2200 -i /ssh/acs-stuart -oStrictHostKeyChecking=no &
+# ssh -L 2375:localhost:2375 -N stuart@slacs-dcosmgmt.northeurope.cloudapp.azure.com -p2200 -i /ssh/acs-stuart -oStrictHostKeyChecking=no &
 
 exitCode=$?
 if [ $exitCode -ne 0 ]

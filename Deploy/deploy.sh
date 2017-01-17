@@ -1,23 +1,43 @@
 #!/bin/bash
+#
 
-# echo kill ssh...
-# kill -kill $(pgrep ssh-agent)
+user="stuart"
+sshPath="/ssh/acs-stuart"
+endpoint=""
+while [[ $# -gt 0 ]]
+do
+    case "$1" in
+        --endpoint | -e)
+            endpoint="$2"
+            shift 2
+            ;;
+        --user | -u)
+            user="$2"
+            shift 2
+            ;;
+        --ssh-path)
+            sshPath="$2"
+            shift 2
+            ;;
+        *)
+            echo "unknown option $1"
+            exit 1
+    esac
+done
+
+if [ -z $endpoint ]; then
+    echo "endpoint (-e  | --endpoint) not specified"
+    exit 2
+fi
+
+
+echo kill ssh...
 kill -kill $(pgrep ssh)
 
-# echo load keys...
-# eval "$(ssh-agent -s)"
-# ssh-add /ssh/acs-stuart
-
-# exitCode=$?
-# if [ $exitCode -ne 0 ]
-# then
-#     exit $exitCode
-# fi;
-
 echo ssh tunnel...
-# TODO parameterise this!
 # Turned off StrictHostKeyChecking to simplify setting up new agents to build ;-)
-ssh -L 2375:localhost:2375 -N stuart@slacs-swarmmgmt.northeurope.cloudapp.azure.com -p2200 -i /ssh/acs-stuart -oStrictHostKeyChecking=no &
+ssh -L 23750:localhost:2375 -N $user@$endpoint -p2200 -i $sshPath -oStrictHostKeyChecking=no &
+# ssh -L 2375:localhost:2375 -N stuart@slacs-swarmmgmt.northeurope.cloudapp.azure.com -p2200 -i /ssh/acs-stuart -oStrictHostKeyChecking=no &
 # ssh -L 2375:localhost:2375 -N stuart@slacs-dcosmgmt.northeurope.cloudapp.azure.com -p2200 -i /ssh/acs-stuart -oStrictHostKeyChecking=no &
 
 exitCode=$?
@@ -29,7 +49,7 @@ fi;
 sleep 1s
 
 echo docker compose pull...
-export DOCKER_HOST=:2375
+export DOCKER_HOST=:23750
 docker-compose pull
 
 exitCode=$?

@@ -1,0 +1,40 @@
+---
+# Work in progress!
+# 
+# * get stable
+# * remove fixed image version
+# * side-by-side for canary release
+# * map to port 80
+# * map based on host headers (as with marathon-lb)
+# * map volume in mongo
+# 
+name: chess:1.0
+gateways: 
+  5000: chess/web
+clusters:
+  chess:
+    services:
+      breed:
+        name: chess:300
+        deployable: stuartleeks/chesstest:300
+        ports:
+          web: 5000/http
+        environment_variables:
+          mongodbConnectionString: mongodb://$db.host:$db.ports.mongo
+        dependencies:
+          db: mongo 
+      scale:
+        cpu: 1
+        memory: 512MB
+        instances: 1
+  db:
+    services:
+      breed: 
+        name: mongo
+        deployable: mongo
+        ports:
+          mongo: 27017/tcp
+      scale:
+        cpu: 1
+        memory: 256MB
+        instances: 1

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo apt-get install dotnet-dev-1.0.1
+
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 dotnet restore

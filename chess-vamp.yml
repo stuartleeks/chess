@@ -1,16 +1,17 @@
 ---
 # Work in progress!
 # 
-# * get stable
 # * remove fixed image version
 # * side-by-side for canary release
-# * map to port 80
-# * map based on host headers (as with marathon-lb)
 # * map volume in mongo
 # 
 name: chess:1.0
 gateways: 
-  5000: chess/web
+  5000: 
+    virtual_hosts: [
+      "chessvamp.faux.ninja"
+    ]
+    routes: chess/web
 clusters:
   chess:
     services:

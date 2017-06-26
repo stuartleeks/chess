@@ -1,4 +1,6 @@
 ---
+# Create the initial Chess deployment: web service and mongo
+#
 # Work in progress!
 # 
 # * remove fixed image version

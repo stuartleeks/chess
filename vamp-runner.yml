@@ -1,0 +1,21 @@
+name: vamp-runner
+gateways:
+  8088: 
+    routes: vamp-runner/port
+    virtual_hosts: [
+      "vamp-runner.faux.ninja"
+    ]
+clusters:
+  vamp-runner:
+    services:
+      breed:
+        name: vamp-runner:katana
+        deployable: magneticio/vamp-runner:katana
+        ports:
+          port: 8088/http
+        environment_variables:
+          VAMP_RUNNER_API_URL: http://10.20.0.100:8080/api/v1
+      scale:
+        cpu: 0.2       
+        memory: 256MB
+        instances: 1

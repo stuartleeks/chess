@@ -1,0 +1,24 @@
+---
+# Add in the new chess version
+#
+# Work in progress!
+# 
+# * Aim is to add the new version into the deployment
+#
+name: chess:1.0
+clusters:
+  chess2:
+    services:
+      breed:
+        name: chess:302
+        deployable: stuartleeks/chesstest:302
+        ports:
+          web: 5000/http
+        environment_variables:
+          mongodbConnectionString: mongodb://$db.host:$db.ports.mongo
+        dependencies:
+          db: mongo 
+      scale:
+        cpu: 1
+        memory: 512MB
+        instances: 1

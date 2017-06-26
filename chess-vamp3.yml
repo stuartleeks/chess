@@ -1,0 +1,14 @@
+---
+# Update the gateway to include traffic from new version
+#
+# Work in progress!
+# 
+# * Aim is to set the gateway weightings
+#
+name: chess:1.0/5000
+kind: gateway
+routes: 
+  chess:1.0/chess/web: 
+    weight: 50%
+  chess:1.0/chess2/web: 
+    weight: 50%

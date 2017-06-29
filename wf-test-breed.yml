@@ -1,0 +1,13 @@
+kind: breed
+name: wf_test
+deployable:
+  type: application/javascript
+  definition: |
+    'use strict';
+
+    var vamp = require('vamp-node-client'); // required to interact with the Vamp API
+
+    var api = new vamp.Api(); // a new Vamp API object
+
+    // create a Vamp event - tag, value, event_type
+    api.event('mytag:workflow', 'Value to go here...', 'wf_test');  

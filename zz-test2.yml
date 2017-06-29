@@ -1,0 +1,66 @@
+---
+kind: breed
+name: hello_workflow
+deployable:
+  type: application/javascript
+  definition: |
+    'use strict';
+
+    var vamp = require('vamp-node-client'); // required to interact with the Vamp API
+
+    var api = new vamp.Api(); // a new Vamp API object
+
+    // create a Vamp event - tag, value, event_type
+    api.event('tag1:tag2', 'starting', 'hello_workflow');   
+
+    console.log("Testing!!!");
+    
+    var http = require('http');
+    http.get({
+      hostname: 'requestb.in',
+      port: 80,
+      path: '/110ne7v1'
+    }, (res) => {
+      // Do stuff with response
+    });
+
+    //var post_data = '[]';
+    //var post_options = {
+    //  hostname: 'requestb.in',
+    //  protocol: 'https',
+    //  port: 80,
+    //  path: '/110ne7v1',
+    //  method: 'POST',
+    //  headers: {
+    //    'Content-Type': 'application/json',
+    //    'Content-Length': Buffer.byteLength(post_data)
+    //  }
+    //};
+    //var post_req = http.request(post_options, function(res) {
+    //    res.setEncoding('utf8');
+    //    res.on('data', function (chunk) {
+    //        console.log('Response: ' + chunk);
+    //    });
+    //});
+    //
+    //// post the data
+    //post_req.write(post_data);
+    //post_req.end();
+
+    //var request = require('request');
+    //var url ='https://requestb.in/110ne7v1'
+    //request(url, function (error, response, body) {
+    //  if (!error) { 
+    //    console.log(body);       }    });
+
+    // create a Vamp event - tag, value, event_type
+    api.event('tag1:tag2', 'finishing', 'hello_workflow');   
+
+---
+kind: workflow
+name: hello_workflow
+breed: hello_workflow
+environment_variables:
+  VAMP_WORKFLOW_EXECUTION_PERIOD: '5' 
+  VAMP_WORKFLOW_EXECUTION_TIMEOUT: '4'  # should be less than VAMP_WORKFLOW_EXECUTION_PERIOD
+schedule: daemon

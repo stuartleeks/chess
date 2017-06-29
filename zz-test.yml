@@ -1,0 +1,25 @@
+---
+kind: breed
+name: zz_test
+deployable:
+  type: application/javascript
+  definition: |
+    'use strict';
+
+    var vamp = require('vamp-node-client'); // required to interact with the Vamp API
+
+    var api = new vamp.Api(); // a new Vamp API object
+
+    // create a Vamp event - tag, value, event_type
+    api.event('tag1wf:tag2wf', 'wf_optional_value', 'wf_hello_workflow');   
+
+---
+kind: workflow
+name: zz_test
+breed: zz_test
+schedule:
+  event: run:zz_test
+environment_variables:
+  # VAMP_WORKFLOW_DATA: ${data} # using custom env to get the event (data)
+  VAMP_WORKFLOW_EXECUTION_PERIOD: '0'
+  VAMP_WORKFLOW_EXECUTION_TIMEOUT: '4'

@@ -11,7 +11,16 @@ deployable:
     var api = new vamp.Api(); // a new Vamp API object
 
     // create a Vamp event - tag, value, event_type
-    api.event('tag1wf:tag2wf', 'wf_optional_value', 'wf_hello_workflow');   
+    api.event('started', 'put value here', 'zz_test');   
+
+    var data = '';
+    # if (process.env.VAMP_WORKFLOW_DATA) {
+      # let event = Buffer.from(process.env.VAMP_WORKFLOW_DATA, 'base64').toString('utf8');
+      # data = event ? JSON.parse(event).tags : data;
+    # }
+    # api.event('data', data, 'zz_test');   
+    
+    api.event('finished', 'put value here', 'zz_test');   
 
 ---
 kind: workflow
@@ -20,6 +29,6 @@ breed: zz_test
 schedule:
   event: run:zz_test
 environment_variables:
-  # VAMP_WORKFLOW_DATA: ${data} # using custom env to get the event (data)
+  VAMP_WORKFLOW_DATA: ${data} # using custom env to get the event (data)
   VAMP_WORKFLOW_EXECUTION_PERIOD: '0'
   VAMP_WORKFLOW_EXECUTION_TIMEOUT: '4'

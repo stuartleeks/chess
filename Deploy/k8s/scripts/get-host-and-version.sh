@@ -11,6 +11,7 @@ while [ 1 -eq 1 ]; do
     build=$(grep -Po "Build: \K[a-z0-9-]*" /tmp/chess.html)
 
     echo "Build: $build    Host: $host"
+    sleep 0.5
 done
 
 ## TODO

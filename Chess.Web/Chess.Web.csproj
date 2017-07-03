@@ -37,7 +37,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.0.1" />
     <PackageReference Include="MongoDB.Driver" Version="2.3.0-rc1" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="1.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.ViewCompilation" Version="1.1.0-*" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.ViewCompilation" Version="1.1.0-*" PrivateAssets="All" />
 </ItemGroup>
 
   <Target Name="PrecompileScript" BeforeTargets="BeforeBuild">

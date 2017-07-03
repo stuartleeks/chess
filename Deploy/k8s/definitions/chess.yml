@@ -1,0 +1,99 @@
+# chessweb deployment (container instances)
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: chessweb
+  name: chessweb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: chessweb
+  template:
+    metadata:
+      labels:
+        run: chessweb
+    spec:
+      containers:
+      - image: readyacrne.azurecr.io/stuartleeks/chesstest:314
+        imagePullPolicy: Always
+        name: chessweb
+        env:
+          - name: mongodbConnectionString
+            value: mongodb://mongo:27017
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+      restartPolicy: Always
+      imagePullSecrets:
+       - name: readyacrnesecret
+
+
+---
+#chessweb service (load balancer)
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: chessweb
+  name: chessweb
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    run: chessweb
+  sessionAffinity: None
+  type: LoadBalancer
+
+
+---
+# mongo deployment (container instances)
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: mongo
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: mongo
+  template:
+    metadata:
+      labels:
+        run: mongo
+    spec:
+      containers:
+      - image: mongo
+        imagePullPolicy: Always
+        name: mongo
+        ports:
+        - containerPort: 27017
+          protocol: TCP
+      restartPolicy: Always
+
+
+
+---
+#chessweb service (cluster ip)
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: mongo
+  name: mongo
+  namespace: default
+spec:
+  clusterIP: 10.0.173.170
+  ports:
+  - port: 27017
+    protocol: TCP
+    targetPort: 27017
+  selector:
+    run: mongo
+  type: ClusterIP
+

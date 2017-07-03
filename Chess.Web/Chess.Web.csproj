@@ -6,7 +6,7 @@
     <AssemblyName>Chess.Web</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>Chess.Web</PackageId>
-    <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>1.1.2</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;portable-net45+win8</PackageTargetFallback>
   </PropertyGroup>
 

@@ -13,6 +13,7 @@ namespace Chess.Web.Models.Game
         public Common.Color Opponent { get; set; }
         public bool HasMoves { get; set; }
         public bool InCheck { get; set; }
+        public List<HistoricalMove> MoveHistory { get; set; }
     }
     public class Board
     {
@@ -32,5 +33,12 @@ namespace Chess.Web.Models.Game
         public string ReferenceString { get; set; }
         public Common.SquareReference Reference { get; set; }
         public string SelectUrl { get; set; }
+    }
+    public class HistoricalMove
+    {
+        public int TurnNumber { get; set; }
+        public string White { get; set; }
+        public string Black { get; set; }
+
     }
 }

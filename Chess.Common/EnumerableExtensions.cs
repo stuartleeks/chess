@@ -24,5 +24,31 @@ namespace Chess.Common
         {
             return item != null;
         }
+
+        public static IEnumerable<Tuple<T,T>> Pair<T>(this IEnumerable<T> items)
+            where T : class
+        {
+            T item1 = null;
+
+            bool odd = true;
+            foreach (var item in items)
+            {
+                if (odd)
+                {
+                    item1 = item;
+                }
+                else
+                {
+                    // got a pair
+                    yield return new Tuple<T, T>(item1, item);
+                    item1 = null;
+                }
+                odd = !odd;
+            }
+            if (!odd)
+            {
+                yield return new Tuple<T, T>(item1, null);
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ using Chess.Web.Models.Game;
 using Chess.Web.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.ApplicationInsights;
+using Chess.Common;
 
 namespace Chess.Web.Controllers
 {
@@ -139,9 +140,9 @@ namespace Chess.Web.Controllers
             var model = new GameModel
             {
                 CurrentPlayer = game.CurrentTurn,
-                Opponent= game.CurrentTurn == Common.Color.Black ? Common.Color.White : Common.Color.Black,
+                Opponent = game.CurrentTurn == Common.Color.Black ? Common.Color.White : Common.Color.Black,
                 InCheck = game.CurrentPlayerInCheck,
-                Board = new Board
+                Board = new Models.Game.Board
                 {
                     Squares = game.Board.Squares
                                 .Select((row, rowIndex) =>
@@ -169,21 +170,21 @@ namespace Chess.Web.Controllers
                                     })
                                     .ToArray()
                                 ).ToArray()
-                }
+                },
+                MoveHistory = MapToHistoricalMoves(game.Moves)
             };
             model.HasMoves = hasMoves;
             return model;
         }
-
         private GameModel MapToChooseEndPositionModel(Common.Game game, Common.SquareReference selectedSquareReference)
         {
             Common.SquareReference[] availableMoves = game.GetAvailableMoves(selectedSquareReference).ToArray();
             return new GameModel
             {
                 CurrentPlayer = game.CurrentTurn,
-                Opponent= game.CurrentTurn == Common.Color.Black ? Common.Color.White : Common.Color.Black,
+                Opponent = game.CurrentTurn == Common.Color.Black ? Common.Color.White : Common.Color.Black,
                 InCheck = game.CurrentPlayerInCheck,
-                Board = new Board
+                Board = new Models.Game.Board
                 {
                     Squares = game.Board.Squares
                                 .Select((row, rowIndex) =>
@@ -208,7 +209,8 @@ namespace Chess.Web.Controllers
                                     .ToArray()
                                 ).ToArray(),
                     SelectedSquare = selectedSquareReference
-                }
+                },
+                MoveHistory = MapToHistoricalMoves(game.Moves)
             };
         }
         private GameModel MapToConfirmModel(
@@ -220,8 +222,8 @@ namespace Chess.Web.Controllers
             return new GameModel
             {
                 CurrentPlayer = game.CurrentTurn,
-                Opponent= game.CurrentTurn == Common.Color.Black ? Common.Color.White : Common.Color.Black,
-                Board = new Board
+                Opponent = game.CurrentTurn == Common.Color.Black ? Common.Color.White : Common.Color.Black,
+                Board = new Models.Game.Board
                 {
                     Squares = game.Board.Squares
                                 .Select((row, rowIndex) =>
@@ -244,9 +246,35 @@ namespace Chess.Web.Controllers
                                     .ToArray()
                                 ).ToArray(),
                     SelectedSquare = selectedSquareReference
-                }
+                },
+                MoveHistory = MapToHistoricalMoves(game.Moves)
             };
         }
+
+        private List<HistoricalMove> MapToHistoricalMoves(IList<Move> moves)
+        {
+            string MoveToString(Move move)
+            {
+                if (move == null)
+                {
+                    return "";
+                }
+                return $"{move.Piece.PieceType} to {move.End}";
+            }
+            return moves.Pair()
+                        .Select((pair, index) => new HistoricalMove
+                        {
+                            // TODO
+                            // - check move format
+                            // - indicate piece capture, check?
+                            TurnNumber = index + 1,
+                            White = MoveToString(pair.Item1),
+                            Black = MoveToString(pair.Item2)
+                        })
+                        .ToList();
+        }
+
+
         static readonly Dictionary<Common.Color, char> ImageColors = new Dictionary<Common.Color, char>
         {
             {Common.Color.Black, 'd' },

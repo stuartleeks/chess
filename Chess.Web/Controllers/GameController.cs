@@ -88,7 +88,7 @@ namespace Chess.Web.Controllers
             var pieceReference = (Common.SquareReference)pieceSquareRef;
 
             var model = MapToChooseEndPositionModel(game, pieceReference);
-            return View("ShowGame", model);
+            return View(model);
         }
 
         [HttpGet("play/{gameId}/{pieceSquareRef}/{endPosition}")]

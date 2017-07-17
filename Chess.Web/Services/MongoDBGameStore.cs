@@ -69,7 +69,8 @@ namespace Chess.Web.Services
                                                 { "moveTimeUtc", m.MoveTimeUtc },
                                                 { "piece", new BsonDocument { {"color", m.Piece.Color }, { "type", m.Piece.PieceType } } },
                                                 { "start", m.Start.ToString() },
-                                                { "end", m.End.ToString() }
+                                                { "end", m.End.ToString() },
+                                                { "captured", new BsonDocument { {"color", m.CapturedPiece.Color }, { "type", m.CapturedPiece.PieceType } } }
                                             })
                                         )}
             };
@@ -93,7 +94,8 @@ namespace Chess.Web.Services
                             item["moveTimeUtc"].ToUniversalTime(),
                             item["piece"].ToPiece(),
                             item["start"].AsString,
-                            item["end"].AsString
+                            item["end"].AsString,
+                            item["captured"].ToPiece()
                         )
                     )
                     .ToList();

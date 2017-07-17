@@ -38,31 +38,10 @@
         </div>
         @if (Model.InCheck)
         {
-        <div class="info-after-board">
-            <h2>You are in check</h2>
-        </div>
+            <div class="info-after-board">
+                <h2>You are in check</h2>
+            </div>
         }
     </div>
-    <div class="col-md-6">
-        <h2>History</h2>
-        <table cellspacing="100" class="table table-condensed">
-            <thead>
-                <tr>
-                    <td></td>
-                    <td>White</td>
-                    <td>Black</td>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var move in Model.MoveHistory)
-                {
-                    <tr>
-                        <td>@move.TurnNumber</td>
-                        <td>@move.White</td>
-                        <td>@move.Black</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+    @Html.Partial("_History", Model.MoveHistory)
 </div>

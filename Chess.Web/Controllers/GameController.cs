@@ -259,7 +259,12 @@ namespace Chess.Web.Controllers
                 {
                     return "";
                 }
-                return $"{move.Piece.PieceType} to {move.End}";
+                string captured = null;
+                if (move.CapturedPiece.PieceType != PieceType.Empty)
+                {
+                    captured = "x" + NotationPieceTypes[move.CapturedPiece.PieceType];
+                }
+                return $"{NotationPieceTypes[move.Piece.PieceType]}{move.Start}-{move.End}{captured}";
             }
             return moves.Pair()
                         .Select((pair, index) => new HistoricalMove
@@ -277,17 +282,26 @@ namespace Chess.Web.Controllers
 
         static readonly Dictionary<Common.Color, char> ImageColors = new Dictionary<Common.Color, char>
         {
-            {Common.Color.Black, 'd' },
-            {Common.Color.White, 'l' },
+            {Color.Black, 'd' },
+            {Color.White, 'l' },
         };
         static readonly Dictionary<Common.PieceType, char> ImagePieceTypes = new Dictionary<Common.PieceType, char>
         {
-            {Common.PieceType.Pawn, 'p' },
-            {Common.PieceType.Rook, 'r' },
-            {Common.PieceType.Knight, 'n' },
-            {Common.PieceType.Bishop, 'b' },
-            {Common.PieceType.Queen, 'q' },
-            {Common.PieceType.King, 'k' },
+            {PieceType.Pawn, 'p' },
+            {PieceType.Rook, 'r' },
+            {PieceType.Knight, 'n' },
+            {PieceType.Bishop, 'b' },
+            {PieceType.Queen, 'q' },
+            {PieceType.King, 'k' },
+        };
+        static readonly Dictionary<PieceType, string> NotationPieceTypes = new Dictionary<PieceType, string>
+        {
+            {PieceType.Pawn, "P" },
+            {PieceType.Rook, "R" },
+            {PieceType.Knight, "Kt" },
+            {PieceType.Bishop, "B" },
+            {PieceType.Queen, "Q" },
+            {PieceType.King, "K" },
         };
         private TelemetryClient _telemetryClient;
 

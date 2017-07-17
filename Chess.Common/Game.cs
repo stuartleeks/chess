@@ -68,12 +68,13 @@ namespace Chess.Common
                 }
             }
 
+            var capturedPiece = Board[to].Piece;
             Square square = Board[from];
             var newGame = new Game(
                 id: Id,
                 currentTurn: (CurrentTurn == Color.Black) ? Color.White : Color.Black,
                 board: Board.MovePiece(from, to),
-                moves: _moves.Concat(new[] { new Move(DateTime.UtcNow, square.Piece, from, to) }).ToList()
+                moves: _moves.Concat(new[] { new Move(DateTime.UtcNow, square.Piece, from, to, capturedPiece) }).ToList()
             );
             return newGame;
             // TODO - add a flag for whether the current player is in check
@@ -362,22 +363,24 @@ namespace Chess.Common
 
     public class Move
     {
-        public Move(DateTime moveTimeUtc, Piece piece, SquareReference start, SquareReference end)
+        public Move(DateTime moveTimeUtc, Piece piece, SquareReference start, SquareReference end, Piece capturedPiece)
         {
             MoveTimeUtc = moveTimeUtc;
             Piece = piece;
             Start = start;
             End = end;
+            CapturedPiece = capturedPiece;
         }
 
         public DateTime MoveTimeUtc { get; private set; }
         public Piece Piece { get; private set; }
         public SquareReference Start { get; private set; }
         public SquareReference End { get; private set; }
+        public Piece CapturedPiece { get; private set; }
 
         public Move Clone()
         {
-            return new Move(MoveTimeUtc, Piece, Start, End);
+            return new Move(MoveTimeUtc, Piece, Start, End, CapturedPiece);
         }
     }
 

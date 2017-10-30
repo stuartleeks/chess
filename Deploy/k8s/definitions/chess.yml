@@ -16,7 +16,7 @@ spec:
         run: chessweb
     spec:
       containers:
-      - image: stuartleeks/chesstest:309
+      - image: stuartleeks/chesstest:latest
         imagePullPolicy: Always
         name: chessweb
         env:

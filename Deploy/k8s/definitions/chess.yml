@@ -16,7 +16,7 @@ spec:
         run: chessweb
     spec:
       containers:
-      - image: readyacrne.azurecr.io/stuartleeks/chesstest:314
+      - image: stuartleeks/chesstest:309
         imagePullPolicy: Always
         name: chessweb
         env:

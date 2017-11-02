@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "Chess.Web"
+		},
+		{
+			"path": "Chess.Common"
+		},
+		{
+			"path": "Chess.Common.UnitTests"
+		}
+	],
+	"settings": {}
+}
